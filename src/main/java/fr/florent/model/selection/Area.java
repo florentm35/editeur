@@ -4,6 +4,9 @@ import javafx.geometry.Point2D;
 
 public class Area {
     private Point2D begin;
+
+
+    private Point2D end;
     private double width;
     private double height;
 
@@ -20,6 +23,7 @@ public class Area {
     public Point2D getBegin() {
         return begin;
     }
+
 
     public void setBegin(Point2D begin) {
         this.begin = begin;
@@ -41,35 +45,46 @@ public class Area {
         this.height = height;
     }
 
-    public double getAbsoluteX(){
+    public Point2D getEnd() {
+        return end;
+    }
+
+    public void setEnd(Point2D end) {
+        this.end = end;
+    }
+
+    public double getAbsoluteX() {
         if (this.getWidth() < 0) {
             return this.getBegin().getX() + this.getWidth();
-        }else{
+        } else {
             return this.getBegin().getX();
         }
     }
-    public double getAbsoluteWidth(){
+
+    public double getAbsoluteWidth() {
         if (this.getWidth() < 0) {
             return -this.getWidth();
-        }else{
+        } else {
             return this.getWidth();
         }
     }
 
-    public double getAbsoluteY(){
+    public double getAbsoluteY() {
         if (this.getHeight() < 0) {
             return this.getBegin().getY() + this.getHeight();
-        }else{
+        } else {
             return this.getBegin().getY();
         }
     }
-    public double getAbsoluteHeight(){
+
+    public double getAbsoluteHeight() {
         if (this.getHeight() < 0) {
             return -this.getHeight();
-        }else{
+        } else {
             return this.getHeight();
         }
     }
+
     @Override
     public String toString() {
         return "Area{" +

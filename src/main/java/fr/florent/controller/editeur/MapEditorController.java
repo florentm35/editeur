@@ -1,5 +1,6 @@
 package fr.florent.controller.editeur;
 
+import fr.florent.composant.event.EventSelectionAndDragged;
 import fr.florent.controller.AbstractController;
 import fr.florent.model.editeur.layer.Layer;
 import fr.florent.model.editeur.Map;
@@ -13,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Pair;
 import org.apache.log4j.Logger;
 
 import java.net.URL;
@@ -28,11 +30,13 @@ public class MapEditorController extends AbstractController {
     public GridPane boxImage;
     public Pane paneMap;
 
-
     private Map map;
     private TileLayer tileSelected;
     private TileSet tileSet;
-    private Rectangle blitMask;
+    private Rectangle selectionMask;
+
+    private int selectLayerId = 0;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -40,14 +44,55 @@ public class MapEditorController extends AbstractController {
         Image imagePng = new Image(getClass().getResourceAsStream("/tileset.png"));
         this.tileSet = new TileSet(imagePng, 32, 32);
 
+
         initMap();
         renderMap();
 
 
-        paneMap.setOnMouseMoved(e -> {
+        EventSelectionAndDragged eventDrag = new EventSelectionAndDragged(paneMap, map.getWidth() * tileSet.getTileWidth(), map.getHeight() * tileSet.getTileHeight());
+        eventDrag.setOnRelease(a -> {
+
+
+        });
+
+        eventDrag.setOnDragged(area -> {
+
+            int columnBegin = (int) Math.floor(area.getBegin().getX() / tileSet.getTileWidth());
+            int lineBegin = (int) Math.floor(area.getBegin().getY() / tileSet.getTileHeight());
+
+            int columnEnd = (int) Math.floor(area.getEnd().getX() / tileSet.getTileWidth());
+            int lineEnd = (int) Math.floor(area.getEnd().getY() / tileSet.getTileHeight());
+
+            int width = columnEnd - columnBegin;
+            width += (width < 0 ? -tileSelected.getWidth() : tileSelected.getWidth());
+            if (width < 0) {
+                width +=1;
+                width = (int) (Math.ceil(width / tileSelected.getWidth())) * tileSelected.getWidth();
+                columnBegin += width;
+                width = width * -1 + tileSelected.getWidth();
+            } else {
+                width = (int) (Math.floor(width / tileSelected.getWidth())) * tileSelected.getWidth();
+            }
+
+            int height = lineEnd - lineBegin;
+            height += (height < 0 ? -tileSelected.getHeight() : tileSelected.getHeight());
+            if (height < 0) {
+                height+=1;
+                height = (int) (Math.ceil(height / tileSelected.getHeight())) * tileSelected.getHeight();
+                lineBegin += height;
+                height = height * -1 + tileSelected.getHeight();
+            } else {
+                height = (int) (Math.floor(height / tileSelected.getHeight())) * tileSelected.getHeight();
+            }
+
+
+            updateSelectionMask(columnBegin, lineBegin, width, height);
+        });
+
+        eventDrag.setOnMouve((area, event) -> {
             if (tileSelected != null) {
-                int column = (int) Math.floor(e.getX() / tileSet.getTileWidth());
-                int line = (int) Math.floor(e.getY() / tileSet.getTileHeight());
+                int column = (int) Math.floor(event.getX() / tileSet.getTileWidth());
+                int line = (int) Math.floor(event.getY() / tileSet.getTileHeight());
 
                 if (column + tileSelected.getWidth() > map.getWidth()) {
                     column = map.getWidth() - tileSelected.getWidth();
@@ -57,20 +102,34 @@ public class MapEditorController extends AbstractController {
                     line = map.getHeight() - tileSelected.getHeight();
                 }
 
-                if (blitMask == null) {
-                    blitMask = getBlitMask(column, line);
-                    boxImage.add(blitMask, column, line, tileSelected.getWidth(), tileSelected.getHeight());
-                } else if (blitMask.getX() != column || blitMask.getY() != line) {
-                    clearRectangle();
-                    blitMask = getBlitMask(column, line);
-                    boxImage.add(blitMask, column, line, tileSelected.getWidth(), tileSelected.getHeight());
-                }
+                int width = tileSelected.getWidth();
+                int height = tileSelected.getHeight();
+
+                updateSelectionMask(column, line, width, height);
             }
 
         });
 
         paneMap.setOnMouseExited(e -> clearRectangle());
 
+    }
+
+    private void updateSelectionMask(int column, int line, int width, int height) {
+        if (selectionMask == null) {
+            selectionMask = getSelectionMask(column, line, width, height);
+            boxImage.add(selectionMask, column, line, width, height);
+        } else {
+
+            double selectionWidth = (selectionMask.getWidth() + 2) / tileSet.getTileWidth();
+            double selectionHeight = (selectionMask.getHeight() + 2) / tileSet.getTileHeight();
+
+            if (selectionMask.getX() != column || selectionMask.getY() != line
+                    || selectionWidth != width || selectionHeight != height) {
+                clearRectangle();
+                selectionMask = getSelectionMask(column, line, width, height);
+                boxImage.add(selectionMask, column, line, width, height);
+            }
+        }
     }
 
     /**
@@ -80,19 +139,21 @@ public class MapEditorController extends AbstractController {
      * @param line
      * @return
      */
-    private Rectangle getBlitMask(int column, int line) {
+    private Rectangle getSelectionMask(int column, int line, int width, int height) {
+
 
         int strockeSized = 2;
 
         Rectangle rectangle = new Rectangle();
         rectangle.setX(column);
-        rectangle.setWidth(tileSelected.getWidth() * tileSet.getTileWidth() - strockeSized);
+        rectangle.setWidth(width * tileSet.getTileWidth() - strockeSized);
         rectangle.setY(line);
-        rectangle.setHeight(tileSelected.getHeight() * tileSet.getTileHeight() - strockeSized);
+        rectangle.setHeight(height * tileSet.getTileHeight() - strockeSized);
 
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.BLACK);
         rectangle.setStrokeWidth(strockeSized);
+
 
         return rectangle;
     }
@@ -102,9 +163,9 @@ public class MapEditorController extends AbstractController {
      */
     private void clearRectangle() {
 
-        boxImage.getChildren().remove(this.blitMask);
+        boxImage.getChildren().remove(this.selectionMask);
 
-        this.blitMask = null;
+        this.selectionMask = null;
 
     }
 
