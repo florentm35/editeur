@@ -10,7 +10,6 @@ import java.io.IOException;
 public abstract class AbstractController implements Initializable {
 
     //TODO: Voir comment refaire ce truc
-
     public static Stage getStage(String ressource, String title) throws IOException {
         return getStage(ressource, title, -1, -1);
     }

@@ -22,16 +22,17 @@ public class MapEditorController extends AbstractController {
 
     private static final Logger LOGGER = Logger.getLogger(MapEditorController.class.getName());
 
-
     public static final String RESSOURCE_VIEW_PATH = "/scene/mapEditor.fxml";
     public static final String RESSOURCE_TITLE = "Editor";
+
     public GridPane boxImage;
     public Pane paneMap;
+
 
     private Map map;
     private TileLayer tileSelected;
     private TileSet tileSet;
-    private Rectangle rectangle;
+    private Rectangle blitMask;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -47,16 +48,24 @@ public class MapEditorController extends AbstractController {
             if (tileSelected != null) {
                 int column = (int) Math.floor(e.getX() / tileSet.getTileWidth());
                 int line = (int) Math.floor(e.getY() / tileSet.getTileHeight());
-                if (rectangle == null) {
-                    rectangle = getRectangle(column, line);
-                    boxImage.add(rectangle, column, line, tileSelected.getWidth(), tileSelected.getHeight());
-                } else if (rectangle.getX() != column || rectangle.getY() != line) {
+
+                if (column + tileSelected.getWidth() > map.getWidth()) {
+                    column = map.getWidth() - tileSelected.getWidth();
+                }
+
+                if (line + tileSelected.getHeight() > map.getHeight()) {
+                    line = map.getHeight() - tileSelected.getHeight();
+                }
+
+                if (blitMask == null) {
+                    blitMask = getBlitMask(column, line);
+                    boxImage.add(blitMask, column, line, tileSelected.getWidth(), tileSelected.getHeight());
+                } else if (blitMask.getX() != column || blitMask.getY() != line) {
                     clearRectangle();
-                    rectangle = getRectangle(column, line);
-                    boxImage.add(rectangle, column, line, tileSelected.getWidth(), tileSelected.getHeight());
+                    blitMask = getBlitMask(column, line);
+                    boxImage.add(blitMask, column, line, tileSelected.getWidth(), tileSelected.getHeight());
                 }
             }
-
 
         });
 
@@ -71,7 +80,7 @@ public class MapEditorController extends AbstractController {
      * @param line
      * @return
      */
-    private Rectangle getRectangle(int column, int line) {
+    private Rectangle getBlitMask(int column, int line) {
 
         int strockeSized = 2;
 
@@ -93,11 +102,12 @@ public class MapEditorController extends AbstractController {
      */
     private void clearRectangle() {
 
-        boxImage.getChildren().remove(this.rectangle);
+        boxImage.getChildren().remove(this.blitMask);
 
-        this.rectangle = null;
+        this.blitMask = null;
 
     }
+
     /**
      * Create map for test
      */
@@ -160,13 +170,13 @@ public class MapEditorController extends AbstractController {
 
     /**
      * Outer event call when tile selection change
+     *
      * @param tileLayer
      */
     public void onChangeTileSelection(TileLayer tileLayer) {
         this.tileSelected = tileLayer;
         clearRectangle();
     }
-
 
 
 }

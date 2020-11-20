@@ -2,13 +2,12 @@ package fr.florent.controller.editeur;
 
 import fr.florent.controller.AbstractController;
 import fr.florent.controller.Controller;
-import fr.florent.composant.event.IActionAreaEvent;
 import fr.florent.controller.editeur.event.IActionTileSelect;
 import fr.florent.model.editeur.layer.TileLayer;
 import fr.florent.model.editeur.tile.Tile;
 import fr.florent.model.selection.Area;
 import fr.florent.model.editeur.tileset.TileSet;
-import fr.florent.composant.event.EventSelection;
+import fr.florent.composant.event.EventSelectionAndDragged;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -68,7 +67,9 @@ public class TilePickerController extends AbstractController {
         rectangle.setFill(Color.rgb(0, 0, 1, 0.5));
         rectangle.setStroke(Color.BLUE);
 
-        EventSelection selection = new EventSelection(paneTileset);
+        EventSelectionAndDragged selection = new EventSelectionAndDragged(paneTileset, (int) tileSet.getImagePng().getWidth(),
+                (int) tileSet.getImagePng().getHeight());
+
         selection.setOnDragged(area -> {
             selectionOnDragged(rectangle, area);
         });
@@ -81,6 +82,7 @@ public class TilePickerController extends AbstractController {
     /**
      * On release selection of tile<br/>
      * Blit selection area
+     *
      * @param tileSet
      * @param column
      * @param grid
@@ -95,16 +97,13 @@ public class TilePickerController extends AbstractController {
         double width = area.getAbsoluteWidth();
         double height = area.getAbsoluteHeight();
 
-
-        for (Rectangle cell : grid) {
-            cell.setFill(Color.TRANSPARENT);
-        }
-
         int xBegin = (int) Math.floor(x / tileSet.getTileWidth());
         int yBegin = (int) (Math.floor(y / tileSet.getTileHeight()));
 
         int xEnd = (int) Math.floor((x + width) / tileSet.getTileWidth()) + 1;
         int yEnd = (int) (Math.floor((y + height) / tileSet.getTileHeight())) + 1;
+
+        clearSelection(grid);
 
         // TODO : Voir a séparer l'affichage de la création du TileLayer pour l'action
         TileLayer layer = new TileLayer(xEnd - xBegin, yEnd - yBegin);
@@ -124,9 +123,16 @@ public class TilePickerController extends AbstractController {
         }
     }
 
+    private void clearSelection(List<Rectangle> grid) {
+        for (Rectangle cell : grid) {
+            cell.setFill(Color.TRANSPARENT);
+        }
+    }
+
     /**
      * On dragged for tile selection<br/>
      * Change selection area
+     *
      * @param rectangle
      * @param area
      */
@@ -145,6 +151,7 @@ public class TilePickerController extends AbstractController {
 
     /**
      * Create the grid of tileset for the picker
+     *
      * @param tileSet
      * @param column
      * @param line
@@ -172,6 +179,7 @@ public class TilePickerController extends AbstractController {
 
     /**
      * Event tile selection
+     *
      * @param onSelect
      */
     public void setOnSelect(IActionTileSelect onSelect) {
