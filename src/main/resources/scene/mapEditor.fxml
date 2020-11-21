@@ -9,7 +9,7 @@
           fx:controller="fr.florent.controller.editeur.MapEditorController">
 
     <Pane fx:id="paneMap">
-        <GridPane fx:id="boxImage" style="-fx-background-color: white; -fx-grid-lines-visible: true"
+        <GridPane fx:id="boxImage"
                   GridPane.columnIndex="1">
         </GridPane>
     </Pane>

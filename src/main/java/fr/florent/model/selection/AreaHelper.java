@@ -1,7 +1,5 @@
 package fr.florent.model.selection;
 
-import org.apache.log4j.Logger;
-
 public class AreaHelper {
 
     public static Point2D convertPointToGrid(Point2D point, int tileWidth, int tileHeight) {

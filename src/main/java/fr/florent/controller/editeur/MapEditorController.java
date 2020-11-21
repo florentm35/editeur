@@ -78,8 +78,8 @@ public class MapEditorController extends AbstractController {
                         for (double y = maskArea.getBegin().getY(); y <= maskArea.getEnd().getY(); y++) {
 
                             // Sauvegarde dans le layer
-                            layer.put(selection.get((int) x % selection.getWidth(),
-                                    (int) y % selection.getHeight()), (int) x, (int) y);
+                            layer.put(selection.get((int) (x - maskArea.getBegin().getX()) % selection.getWidth(),
+                                    (int) (y - maskArea.getBegin().getY()) % selection.getHeight()), (int) x, (int) y);
 
                             updateCellGrid((int) x, (int) y);
                         }
@@ -120,7 +120,6 @@ public class MapEditorController extends AbstractController {
 
                 Area maskArea = new Area(column, line, width, height);
 
-                LOGGER.debug(maskArea);
                 updateSelectionMask(maskArea);
             }
 
@@ -142,9 +141,6 @@ public class MapEditorController extends AbstractController {
         });
 
         Layer<Tile> layer2 = map.addlayer(new TileLayer(map.getWidth(), map.getHeight()));
-        cellIterate((i, j) -> {
-            layer2.put(new Tile(tileSet, 1, 1), i, j);
-        }, 2);
 
         selectLayerId = 1;
 
@@ -225,6 +221,16 @@ public class MapEditorController extends AbstractController {
         });
     }
 
+    private Rectangle getBorderCell() {
+        Rectangle cell = new Rectangle();
+        cell.setStroke(Color.GRAY);
+        cell.setFill(Color.TRANSPARENT);
+        cell.setWidth(tileSet.getTileWidth() - 1);
+        cell.setHeight(tileSet.getTileHeight() - 1);
+        cell.setStrokeWidth(0.5);
+        return cell;
+    }
+
     /**
      * Refresh map cell to given postion
      *
@@ -241,10 +247,12 @@ public class MapEditorController extends AbstractController {
                 Tile tile = layer.get(x, y);
                 if (tile != null) {
                     ImageView node = new ImageView(tile.getCacheImage());
-                    boxImage.add(node, x, y, 1, 1);
+                    boxImage.add(node, x, y);
                 }
             }
         }
+
+        boxImage.add(getBorderCell(), x, y);
     }
 
     public void removeNodeByRowColumnIndex(final int column, final int row, GridPane gridPane) {
@@ -272,8 +280,6 @@ public class MapEditorController extends AbstractController {
      * @param increment
      */
     private void cellIterate(IActionDoubleIterator action, int increment) {
-
-
         for (int i = 0; i < map.getWidth(); i += increment) {
             for (int j = 0; j < map.getHeight(); j += increment) {
 
