@@ -1,7 +1,7 @@
 package fr.florent.composant.event;
 
 import fr.florent.model.selection.Area;
-import javafx.geometry.Point2D;
+import fr.florent.model.selection.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;

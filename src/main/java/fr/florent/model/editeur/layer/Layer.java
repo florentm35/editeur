@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 public class Layer<T> {
 
+    // TODO :  refactor int to double
     protected Object[] tiles;
     protected int width;
     protected int height;

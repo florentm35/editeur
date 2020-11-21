@@ -1,6 +1,5 @@
 package fr.florent.model.selection;
 
-import javafx.geometry.Point2D;
 
 public class Area {
     private Point2D begin;
@@ -16,9 +15,19 @@ public class Area {
 
     public Area(int x, int y, int width, int height) {
         begin = new Point2D(x, y);
+        end = new Point2D(x + width, y + height);
         this.width = width;
         this.height = height;
     }
+
+    public Area(Point2D begin, Point2D end) {
+        this.begin = begin;
+        this.end = end;
+
+        this.width = end.getX() - begin.getX();
+        this.height = end.getY() - begin.getY();
+    }
+
 
     public Point2D getBegin() {
         return begin;
@@ -53,14 +62,11 @@ public class Area {
         this.end = end;
     }
 
-    public double getAbsoluteX() {
-        if (this.getWidth() < 0) {
-            return this.getBegin().getX() + this.getWidth();
-        } else {
-            return this.getBegin().getX();
-        }
-    }
-
+    /**
+     * Return positive width
+     *
+     * @return
+     */
     public double getAbsoluteWidth() {
         if (this.getWidth() < 0) {
             return -this.getWidth();
@@ -69,14 +75,11 @@ public class Area {
         }
     }
 
-    public double getAbsoluteY() {
-        if (this.getHeight() < 0) {
-            return this.getBegin().getY() + this.getHeight();
-        } else {
-            return this.getBegin().getY();
-        }
-    }
-
+    /**
+     * Return positive height
+     *
+     * @return
+     */
     public double getAbsoluteHeight() {
         if (this.getHeight() < 0) {
             return -this.getHeight();
@@ -85,10 +88,72 @@ public class Area {
         }
     }
 
+    /**
+     * Return min X between begin point and end point
+     *
+     * @return
+     */
+    public double getBeginAbsoluteX() {
+        if (this.getWidth() < 0) {
+            return this.getEnd().getX();
+        } else {
+            return this.getBegin().getX();
+        }
+    }
+
+    /**
+     * Return min Y between begin point and end point
+     *
+     * @return
+     */
+    public double getBeginAbsoluteY() {
+        if (this.getHeight() < 0) {
+            return this.getEnd().getY();
+        } else {
+            return this.getBegin().getY();
+        }
+    }
+
+    /**
+     * Return max X between begin point and end point
+     *
+     * @return
+     */
+    public double getEndAbsoluteX() {
+        if (this.getWidth() < 0) {
+            return this.getBegin().getX();
+        } else {
+            return this.getEnd().getX();
+        }
+    }
+
+    /**
+     * Return max Y between begin point and end point
+     *
+     * @return
+     */
+    public double getEndAbsoluteY() {
+        if (this.getHeight() < 0) {
+            return this.getBegin().getY();
+        } else {
+            return this.getEnd().getY();
+        }
+    }
+
+    /**
+     * Update width and height
+     */
+    public void calculateSize() {
+        this.setWidth(this.getEnd().getX() - this.getBegin().getX());
+        this.setHeight(this.getEnd().getY() - this.getBegin().getY());
+    }
+
+
     @Override
     public String toString() {
         return "Area{" +
                 "begin=" + begin +
+                ", end=" + end +
                 ", width=" + width +
                 ", height=" + height +
                 '}';

@@ -40,4 +40,13 @@ public class TileSet extends AbstractTileSet{
     public void setTileHeight(int tileHeight) {
         this.tileHeight = tileHeight;
     }
+
+    @Override
+    public String toString() {
+        return "TileSet{" +
+                ", tileWidth=" + tileWidth +
+                ", tileHeight=" + tileHeight +
+                ", id='" + id + '\'' +
+                '}';
+    }
 }

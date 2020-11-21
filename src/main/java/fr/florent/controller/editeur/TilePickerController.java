@@ -92,8 +92,8 @@ public class TilePickerController extends AbstractController {
     private void selectionOnRelease(TileSet tileSet, int column, List<Rectangle> grid, Rectangle rectangle, Area area) {
         paneTileset.getChildren().remove(rectangle);
 
-        double x = area.getAbsoluteX();
-        double y = area.getAbsoluteY();
+        double x = area.getBeginAbsoluteX();
+        double y = area.getBeginAbsoluteY();
         double width = area.getAbsoluteWidth();
         double height = area.getAbsoluteHeight();
 
@@ -138,9 +138,9 @@ public class TilePickerController extends AbstractController {
      */
     private void selectionOnDragged(Rectangle rectangle, Area area) {
 
-        rectangle.setX(area.getAbsoluteX());
+        rectangle.setX(area.getBeginAbsoluteX());
         rectangle.setWidth(area.getAbsoluteWidth());
-        rectangle.setY(area.getAbsoluteY());
+        rectangle.setY(area.getBeginAbsoluteY());
         rectangle.setHeight(area.getAbsoluteHeight());
 
         if (!paneTileset.getChildren().contains(rectangle)) {
