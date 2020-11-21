@@ -79,10 +79,10 @@ public class AreaTest {
     public void getEndAbsoluteY() {
         Assert.assertEquals("getBeginAbsoluteY: areaPos.getBegin().getY()",10, areaPos.getBegin().getY(), 0);
         Assert.assertEquals("getBeginAbsoluteY: areaPos.getEnd().getY()",15, areaPos.getEnd().getY(), 0);
-        Assert.assertEquals("getEndAbsoluteY: areaPos.getEndAbsoluteY()",10, areaPos.getEndAbsoluteY(), 0);
+        Assert.assertEquals("getEndAbsoluteY: areaPos.getEndAbsoluteY()",15, areaPos.getEndAbsoluteY(), 0);
 
         Assert.assertEquals("getBeginAbsoluteY: areaNeg.getBegin().getY()",10, areaNeg.getBegin().getY(), 0);
         Assert.assertEquals("getBeginAbsoluteY: areaNeg.getEnd().getY()",5, areaNeg.getEnd().getY(), 0);
-        Assert.assertEquals("getEndAbsoluteY: areaNeg.getEndAbsoluteY()",5, areaNeg.getEndAbsoluteY(), 0);
+        Assert.assertEquals("getEndAbsoluteY: areaNeg.getEndAbsoluteY()",10, areaNeg.getEndAbsoluteY(), 0);
     }
 }

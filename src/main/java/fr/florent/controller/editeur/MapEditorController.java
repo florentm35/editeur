@@ -22,8 +22,6 @@ import javafx.scene.shape.Rectangle;
 import org.apache.log4j.Logger;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
