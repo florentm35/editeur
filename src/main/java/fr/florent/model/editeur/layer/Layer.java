@@ -4,36 +4,36 @@ import java.util.Arrays;
 
 public class Layer<T> {
 
-    // TODO :  refactor int to double
+    // TODO :  refactor double to double
     protected Object[] tiles;
-    protected int width;
-    protected int height;
+    protected double width;
+    protected double height;
 
 
-    public Layer(int width, int height) {
-        tiles = new Object[width * height];
+    public Layer(double width, double height) {
+        tiles = new Object[(int) (width * height)];
         this.width = width;
         this.height = height;
     }
 
-    public void put(T obj, int x, int y) {
+    public void put(T obj, double x, double y) {
         tiles[getIndex(x, y)] = obj;
     }
 
     @SuppressWarnings("unchecked")
-    public T get(int x, int y) {
+    public T get(double x, double y) {
         return (T) tiles[getIndex(x, y)];
     }
 
-    private int getIndex(int x, int y) {
-        return x + y * width;
+    private int getIndex(double x, double y) {
+        return (int) (x + y * width);
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 

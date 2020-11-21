@@ -8,6 +8,7 @@ import fr.florent.model.editeur.tile.Tile;
 import fr.florent.model.selection.Area;
 import fr.florent.model.editeur.tileset.TileSet;
 import fr.florent.composant.event.EventSelectionAndDragged;
+import fr.florent.model.selection.AreaHelper;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -92,27 +93,23 @@ public class TilePickerController extends AbstractController {
     private void selectionOnRelease(TileSet tileSet, int column, List<Rectangle> grid, Rectangle rectangle, Area area) {
         paneTileset.getChildren().remove(rectangle);
 
-        double x = area.getBeginAbsoluteX();
-        double y = area.getBeginAbsoluteY();
-        double width = area.getAbsoluteWidth();
-        double height = area.getAbsoluteHeight();
 
-        int xBegin = (int) Math.floor(x / tileSet.getTileWidth());
-        int yBegin = (int) (Math.floor(y / tileSet.getTileHeight()));
+        AreaHelper.convertAreaToGrid(area, tileSet.getTileWidth(), tileSet.getTileHeight());
 
-        int xEnd = (int) Math.floor((x + width) / tileSet.getTileWidth()) + 1;
-        int yEnd = (int) (Math.floor((y + height) / tileSet.getTileHeight())) + 1;
+        AreaHelper.calculateAbsoluteArea(area);
 
         clearSelection(grid);
 
         // TODO : Voir a séparer l'affichage de la création du TileLayer pour l'action
-        TileLayer layer = new TileLayer(xEnd - xBegin, yEnd - yBegin);
+        TileLayer layer = new TileLayer(area.getWidth(), area.getHeight());
 
         int xLayer = 0;
-        for (int xGrid = xBegin; xGrid < xEnd; xGrid++) {
+        for (double xGrid = area.getBegin().getX(); xGrid <= area.getEnd().getX(); xGrid++) {
             int yLayer = 0;
-            for (int yGrid = yBegin; yGrid < yEnd; yGrid++) {
-                grid.get(xGrid + (yGrid * column)).setFill(Color.rgb(25, 25, 25, 0.5));
+            for (double yGrid = area.getBegin().getY(); yGrid <= area.getEnd().getY(); yGrid++) {
+                grid.get(
+                        (int) (xGrid + (yGrid * column))
+                ).setFill(Color.rgb(25, 25, 25, 0.5));
                 layer.put(new Tile(tileSet, xGrid, yGrid), xLayer, yLayer);
                 yLayer++;
             }
@@ -138,10 +135,12 @@ public class TilePickerController extends AbstractController {
      */
     private void selectionOnDragged(Rectangle rectangle, Area area) {
 
-        rectangle.setX(area.getBeginAbsoluteX());
-        rectangle.setWidth(area.getAbsoluteWidth());
-        rectangle.setY(area.getBeginAbsoluteY());
-        rectangle.setHeight(area.getAbsoluteHeight());
+        AreaHelper.calculateAbsoluteArea(area);
+
+        rectangle.setX(area.getBegin().getX());
+        rectangle.setY(area.getBegin().getY());
+        rectangle.setWidth(area.getWidth());
+        rectangle.setHeight(area.getHeight());
 
         if (!paneTileset.getChildren().contains(rectangle)) {
             paneTileset.getChildren().add(rectangle);

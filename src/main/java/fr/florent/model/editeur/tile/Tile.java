@@ -13,7 +13,7 @@ public class Tile extends AbstractTile {
 
 
     // TODO : voir a déplacer dans une Factory, le modèle n'a pas à gérer le cache
-    public Tile(TileSet tileSet, int x, int y) {
+    public Tile(TileSet tileSet, double x, double y) {
 
         this.id = tileSet.getId() + ";" + x + ";" + y;
 
@@ -27,7 +27,7 @@ public class Tile extends AbstractTile {
             Image imagePng = tileSet.getImagePng();
             PixelReader reader = imagePng.getPixelReader();
 
-            WritableImage newImage = new WritableImage(reader, x * tileSet.getTileWidth(), y * tileSet.getTileHeight(),
+            WritableImage newImage = new WritableImage(reader, (int) x * tileSet.getTileWidth(), (int) y * tileSet.getTileHeight(),
                     tileSet.getTileWidth(), tileSet.getTileHeight());
             cacheImage = newImage;
 

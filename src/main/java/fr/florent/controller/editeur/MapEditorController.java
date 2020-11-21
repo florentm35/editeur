@@ -65,18 +65,17 @@ public class MapEditorController extends AbstractController {
 
                 AreaHelper.convertAreaToGrid(maskArea, tileSet.getTileWidth(), tileSet.getTileHeight());
 
-                calculateWidth(maskArea);
-                calculateHeight(maskArea);
+                AreaHelper.calculateAbsoluteArea(maskArea, tileSelected.getWidth(), tileSelected.getHeight());
+
                 // Blit Tile
                 Layer layer = map.getLayers().get(selectLayerId);
 
                 if (layer instanceof TileLayer) {
-                    LOGGER.debug(maskArea);
+
 
                     TileLayer selection = tileSelected;
-                    for (double x = maskArea.getBeginAbsoluteX(); x <= maskArea.getEndAbsoluteX(); x++) {
-                        for (double y = maskArea.getBeginAbsoluteY(); y <= maskArea.getEndAbsoluteY(); y++) {
-                            LOGGER.debug(String.format("%s: %f, %s: %f", "x", x, "y", y));
+                    for (double x = maskArea.getBegin().getX(); x <= maskArea.getEnd().getX(); x++) {
+                        for (double y = maskArea.getBegin().getY(); y <= maskArea.getEnd().getY(); y++) {
 
                             // Sauvegarde dans le layer
                             layer.put(selection.get((int) x % selection.getWidth(),
@@ -97,8 +96,7 @@ public class MapEditorController extends AbstractController {
 
                 AreaHelper.convertAreaToGrid(maskArea, tileSet.getTileWidth(), tileSet.getTileHeight());
 
-                calculateWidth(maskArea);
-                calculateHeight(maskArea);
+                AreaHelper.calculateAbsoluteArea(maskArea, tileSelected.getWidth(), tileSelected.getHeight());
 
                 updateSelectionMask(maskArea);
             }
@@ -106,8 +104,8 @@ public class MapEditorController extends AbstractController {
 
         eventDrag.setOnMouve((area, event) -> {
             if (tileSelected != null) {
-                int column = (int) Math.floor(event.getX() / tileSet.getTileWidth());
-                int line = (int) Math.floor(event.getY() / tileSet.getTileHeight());
+                double column = (int) Math.floor(event.getX() / tileSet.getTileWidth());
+                double line = (int) Math.floor(event.getY() / tileSet.getTileHeight());
 
                 if (column + tileSelected.getWidth() > map.getWidth()) {
                     column = map.getWidth() - tileSelected.getWidth();
@@ -117,11 +115,12 @@ public class MapEditorController extends AbstractController {
                     line = map.getHeight() - tileSelected.getHeight();
                 }
 
-                int width = tileSelected.getWidth();
-                int height = tileSelected.getHeight();
+                double width = tileSelected.getWidth();
+                double height = tileSelected.getHeight();
 
                 Area maskArea = new Area(column, line, width, height);
 
+                LOGGER.debug(maskArea);
                 updateSelectionMask(maskArea);
             }
 
@@ -151,57 +150,6 @@ public class MapEditorController extends AbstractController {
 
     }
 
-    /**
-     * Calculate height of selection from selection of tile<br/>
-     * if height < 0 then update Y begin
-     *
-     * @param maskArea
-     */
-    // TODO : refactor with calculateWidth
-    private void calculateHeight(Area maskArea) {
-        double lineBegin = maskArea.getBegin().getY();
-        double lineEnd = maskArea.getEnd().getY();
-        double height = lineEnd - lineBegin;
-
-        height += (height < 0 ? -tileSelected.getHeight() : tileSelected.getHeight());
-        if (height < 0) {
-            height += 1;
-            height = (int) (Math.ceil(height / tileSelected.getHeight())) * tileSelected.getHeight();
-            lineBegin += height;
-            height = height * -1 + tileSelected.getHeight();
-        } else {
-            height = (int) (Math.floor(height / tileSelected.getHeight())) * tileSelected.getHeight();
-        }
-        maskArea.setHeight(height);
-        maskArea.getBegin().setY(lineBegin);
-    }
-
-    /**
-     * Calculate width of selection from selection of tile<br/>
-     * if width < 0 then update X begin
-     *
-     * @param maskArea
-     */
-    // TODO : refactor with calculateHeight
-    private void calculateWidth(Area maskArea) {
-        double columnBegin = maskArea.getBegin().getX();
-        double columnEnd = maskArea.getEnd().getX();
-        double width = columnEnd - columnBegin;
-
-        double widthSecond = tileSelected.getWidth();
-
-        width += (width < 0 ? -widthSecond : widthSecond);
-        if (width < 0) {
-            width += 1;
-            width = (int) (Math.ceil(width / widthSecond)) * widthSecond;
-            columnBegin += width;
-            width = width * -1 + widthSecond;
-        } else {
-            width = (int) (Math.floor(width / widthSecond)) * widthSecond;
-        }
-        maskArea.setWidth(width);
-        maskArea.getBegin().setX(columnBegin);
-    }
 
     /**
      * Blit the slection mask if exist, if not, create it and blit it

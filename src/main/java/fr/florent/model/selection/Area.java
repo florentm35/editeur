@@ -13,7 +13,7 @@ public class Area {
         begin = new Point2D(x, y);
     }
 
-    public Area(int x, int y, int width, int height) {
+    public Area(double x, double y, double width, double height) {
         begin = new Point2D(x, y);
         end = new Point2D(x + width, y + height);
         this.width = width;
@@ -60,68 +60,6 @@ public class Area {
 
     public void setEnd(Point2D end) {
         this.end = end;
-    }
-
-    /**
-     * Return positive width
-     *
-     * @return
-     */
-    public double getAbsoluteWidth() {
-        return Math.abs(this.getWidth());
-    }
-
-    /**
-     * Return positive height
-     *
-     * @return
-     */
-    public double getAbsoluteHeight() {
-        return Math.abs(this.getHeight());
-    }
-
-    /**
-     * Return min X between begin point and end point
-     *
-     * @return
-     */
-    public double getBeginAbsoluteX() {
-        return Math.min(this.getBegin().getX(), this.getEnd().getX());
-    }
-
-    /**
-     * Return min Y between begin point and end point
-     *
-     * @return
-     */
-    public double getBeginAbsoluteY() {
-        return Math.min(this.getBegin().getY(), this.getEnd().getY());
-    }
-
-    /**
-     * Return max X between begin point and end point
-     *
-     * @return
-     */
-    public double getEndAbsoluteX() {
-        return Math.max(this.getBegin().getX(), this.getEnd().getX());
-    }
-
-    /**
-     * Return max Y between begin point and end point
-     *
-     * @return
-     */
-    public double getEndAbsoluteY() {
-        return Math.max(this.getBegin().getY(), this.getEnd().getY());
-    }
-
-    /**
-     * Update width and height
-     */
-    public void calculateSize() {
-        this.setWidth(this.getEnd().getX() - this.getBegin().getX());
-        this.setHeight(this.getEnd().getY() - this.getBegin().getY());
     }
 
 
