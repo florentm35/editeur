@@ -68,11 +68,7 @@ public class Area {
      * @return
      */
     public double getAbsoluteWidth() {
-        if (this.getWidth() < 0) {
-            return -this.getWidth();
-        } else {
-            return this.getWidth();
-        }
+        return Math.abs(this.getWidth());
     }
 
     /**
@@ -81,11 +77,7 @@ public class Area {
      * @return
      */
     public double getAbsoluteHeight() {
-        if (this.getHeight() < 0) {
-            return -this.getHeight();
-        } else {
-            return this.getHeight();
-        }
+        return Math.abs(this.getHeight());
     }
 
     /**
@@ -94,11 +86,7 @@ public class Area {
      * @return
      */
     public double getBeginAbsoluteX() {
-        if (this.getWidth() < 0) {
-            return this.getEnd().getX();
-        } else {
-            return this.getBegin().getX();
-        }
+        return Math.min(this.getBegin().getX(), this.getEnd().getX());
     }
 
     /**
@@ -107,11 +95,7 @@ public class Area {
      * @return
      */
     public double getBeginAbsoluteY() {
-        if (this.getHeight() < 0) {
-            return this.getEnd().getY();
-        } else {
-            return this.getBegin().getY();
-        }
+        return Math.min(this.getBegin().getY(), this.getEnd().getY());
     }
 
     /**
@@ -120,11 +104,7 @@ public class Area {
      * @return
      */
     public double getEndAbsoluteX() {
-        if (this.getWidth() < 0) {
-            return this.getBegin().getX();
-        } else {
-            return this.getEnd().getX();
-        }
+        return Math.max(this.getBegin().getX(), this.getEnd().getX());
     }
 
     /**
@@ -133,11 +113,7 @@ public class Area {
      * @return
      */
     public double getEndAbsoluteY() {
-        if (this.getHeight() < 0) {
-            return this.getBegin().getY();
-        } else {
-            return this.getEnd().getY();
-        }
+        return Math.max(this.getBegin().getY(), this.getEnd().getY());
     }
 
     /**

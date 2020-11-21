@@ -68,11 +68,11 @@ public class AreaTest {
     public void getEndAbsoluteX() {
         Assert.assertEquals("getBeginAbsoluteX: areaPos.getBegin().getX()",10, areaPos.getBegin().getX(), 0);
         Assert.assertEquals("getBeginAbsoluteX: areaPos.getEnd().getX()",15, areaPos.getEnd().getX(), 0);
-        Assert.assertEquals("getEndAbsoluteX: areaPos.getEndAbsoluteX()",10, areaPos.getEndAbsoluteX(), 0);
+        Assert.assertEquals("getEndAbsoluteX: areaPos.getEndAbsoluteX()",15, areaPos.getEndAbsoluteX(), 0);
 
         Assert.assertEquals("getBeginAbsoluteX: areaNeg.getBegin().getX()",10, areaNeg.getBegin().getX(), 0);
         Assert.assertEquals("getBeginAbsoluteX: areaNeg.getEnd().getX()",5, areaNeg.getEnd().getX(), 0);
-        Assert.assertEquals("getEndAbsoluteX: areaNeg.getEndAbsoluteX()",5, areaNeg.getEndAbsoluteX(), 0);
+        Assert.assertEquals("getEndAbsoluteX: areaNeg.getEndAbsoluteX()",10, areaNeg.getEndAbsoluteX(), 0);
     }
 
     @Test
