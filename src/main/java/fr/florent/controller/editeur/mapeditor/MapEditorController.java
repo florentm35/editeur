@@ -4,6 +4,10 @@ import fr.florent.composant.event.EventSelectionAndDragged;
 import fr.florent.composant.message.AbstractMessage;
 import fr.florent.composant.message.MessageSystem;
 import fr.florent.controller.AbstractController;
+import fr.florent.controller.core.annotation.EnumScreenPosition;
+import fr.florent.controller.core.annotation.Screen;
+import fr.florent.controller.core.message.SceneResizeMessage;
+import fr.florent.controller.core.message.WindowsResizeMessage;
 import fr.florent.controller.editeur.tilepicker.message.TileSelectedMessage;
 import fr.florent.model.editeur.Map;
 import fr.florent.model.editeur.layer.Layer;
@@ -19,8 +23,10 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
@@ -30,6 +36,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+@Screen(EnumScreenPosition.CENTER)
 public class MapEditorController extends AbstractController {
 
     private static final Logger LOGGER = Logger.getLogger(MapEditorController.class.getName());
@@ -39,7 +46,8 @@ public class MapEditorController extends AbstractController {
 
     public GridPane boxImage;
     public Pane paneMap;
-    public ScrollPane scrollTileSet;
+    public StackPane parent;
+    public ScrollPane scrollPane;
 
     private Map map;
     private TileLayer tileSelected;
@@ -48,7 +56,7 @@ public class MapEditorController extends AbstractController {
 
     private int selectLayerId = -1;
 
-    private int scale = 1;
+    private double scale = 1;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -62,8 +70,26 @@ public class MapEditorController extends AbstractController {
         renderMap();
         initEvent();
 
-
         paneMap.getTransforms().add(new Scale(scale, scale));
+
+        MessageSystem.getInstance().addObserver(SceneResizeMessage.getKey(EnumScreenPosition.CENTER), this::onWindowsResize);
+
+        paneMap.widthProperty().addListener((obs, oldVal, newVal)  -> {
+            scrollPane.setMaxWidth(newVal.doubleValue() + 2);
+        });
+
+        paneMap.heightProperty().addListener((obs, oldVal, newVal)  -> {
+            scrollPane.setMaxHeight(newVal.doubleValue() + 2);
+        });
+
+    }
+
+    public void onWindowsResize(AbstractMessage message) {
+        if (message instanceof SceneResizeMessage) {
+            SceneResizeMessage wMessage = (SceneResizeMessage) message;
+            parent.setMaxWidth(wMessage.getWidth());
+            parent.setMaxHeight(wMessage.getHeight());
+        }
     }
 
     private void initEvent() {

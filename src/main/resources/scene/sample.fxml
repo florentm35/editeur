@@ -1,9 +1,10 @@
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.SubScene?>
-<GridPane fx:controller="fr.florent.controller.core.Controller" fx:id="parent"
-          xmlns:fx="http://javafx.com/fxml" hgap="10" vgap="10"
-          style="-fx-background-color: red; -fx-grid-lines-visible: true" >
-
-</GridPane>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<HBox fx:controller="fr.florent.controller.core.Controller"
+      xmlns:fx="http://javafx.com/fxml"
+      style="-fx-background-color: grey" >
+    <StackPane fx:id="leftPane"/>
+    <StackPane fx:id="centerPane"/>
+    <StackPane fx:id="rightPane"/>
+</HBox>

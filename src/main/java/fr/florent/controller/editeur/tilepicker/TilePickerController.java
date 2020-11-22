@@ -1,23 +1,29 @@
 package fr.florent.controller.editeur.tilepicker;
 
+import fr.florent.composant.event.EventSelectionAndDragged;
+import fr.florent.composant.message.AbstractMessage;
 import fr.florent.composant.message.MessageSystem;
 import fr.florent.controller.AbstractController;
 import fr.florent.controller.core.Controller;
-import fr.florent.controller.editeur.event.IActionTileSelect;
+import fr.florent.controller.core.annotation.EnumScreenPosition;
+import fr.florent.controller.core.annotation.Screen;
+import fr.florent.controller.core.message.SceneResizeMessage;
+import fr.florent.controller.core.message.WindowsResizeMessage;
 import fr.florent.controller.editeur.tilepicker.message.TileSelectedMessage;
 import fr.florent.model.editeur.layer.TileLayer;
 import fr.florent.model.editeur.tile.Tile;
-import fr.florent.model.selection.Area;
 import fr.florent.model.editeur.tileset.TileSet;
-import fr.florent.composant.event.EventSelectionAndDragged;
+import fr.florent.model.selection.Area;
 import fr.florent.model.selection.AreaHelper;
+
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Screen;
 import org.apache.log4j.Logger;
 
 import java.net.URL;
@@ -25,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+@Screen(EnumScreenPosition.LEFT)
 public class TilePickerController extends AbstractController {
 
     private static final Logger LOGGER = Logger.getLogger(Controller.class.getName());
@@ -34,6 +41,7 @@ public class TilePickerController extends AbstractController {
     public ImageView tilesetImage;
     public ScrollPane scrollTileSet;
     public Pane paneTileset;
+    public StackPane parent;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -41,15 +49,23 @@ public class TilePickerController extends AbstractController {
         Image imagePng = new Image(getClass().getResourceAsStream("/tileset.png"));
         initTilePicker(new TileSet(imagePng, 32, 32));
 
-        double height = Screen.getPrimary().getVisualBounds().getHeight();
+        MessageSystem.getInstance().addObserver(SceneResizeMessage.getKey(EnumScreenPosition.LEFT), this::onWindowsResize);
 
-        scrollTileSet.setMaxHeight(height - 20);
     }
 
+    public void onWindowsResize(AbstractMessage message) {
+        if (message instanceof SceneResizeMessage) {
+            SceneResizeMessage wMessage = (SceneResizeMessage) message;
+            parent.setMaxHeight(wMessage.getHeight());
+            parent.setPrefHeight(wMessage.getHeight());
+        }
+    }
 
     private void initTilePicker(TileSet tileSet) {
 
-        scrollTileSet.setPrefViewportWidth(tileSet.getImagePng().getWidth() + 2);
+
+
+        scrollTileSet.setPrefViewportWidth(tileSet.getImagePng().getWidth() + 10);
 
         tilesetImage.setImage(tileSet.getImagePng());
         tilesetImage.setViewOrder(2);
