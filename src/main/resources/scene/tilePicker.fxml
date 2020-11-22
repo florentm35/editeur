@@ -2,11 +2,11 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.SubScene?>
-<GridPane fx:controller="fr.florent.controller.editeur.TilePickerController"
-          xmlns:fx="http://javafx.com/fxml" hgap="10" vgap="10">
+<Pane fx:controller="fr.florent.controller.editeur.tilepicker.TilePickerController"
+          xmlns:fx="http://javafx.com/fxml" style="-fx-padding: 0 0 10 0">
     <ScrollPane fx:id="scrollTileSet"  GridPane.columnIndex="0" >
         <Pane fx:id="paneTileset">
             <ImageView fx:id="tilesetImage" />
         </Pane>
     </ScrollPane>
-</GridPane>
+</Pane>

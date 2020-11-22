@@ -1,7 +1,10 @@
-package fr.florent.controller.editeur;
+package fr.florent.controller.editeur.mapeditor;
 
 import fr.florent.composant.event.EventSelectionAndDragged;
+import fr.florent.composant.message.AbstractMessage;
+import fr.florent.composant.message.MessageSystem;
 import fr.florent.controller.AbstractController;
+import fr.florent.controller.editeur.tilepicker.message.TileSelectedMessage;
 import fr.florent.model.editeur.Map;
 import fr.florent.model.editeur.layer.Layer;
 import fr.florent.model.editeur.layer.TileLayer;
@@ -13,12 +16,14 @@ import fr.florent.model.selection.Point2D;
 import fr.florent.util.event.IActionDoubleIterator;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Scale;
 import org.apache.log4j.Logger;
 
 import java.net.URL;
@@ -34,6 +39,7 @@ public class MapEditorController extends AbstractController {
 
     public GridPane boxImage;
     public Pane paneMap;
+    public ScrollPane scrollTileSet;
 
     private Map map;
     private TileLayer tileSelected;
@@ -42,18 +48,22 @@ public class MapEditorController extends AbstractController {
 
     private int selectLayerId = -1;
 
+    private int scale = 1;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        MessageSystem.getInstance().addObserver(TileSelectedMessage.class.getName(), this::onChangeTileSelection);
+
         Image imagePng = new Image(getClass().getResourceAsStream("/tileset.png"));
         this.tileSet = new TileSet(imagePng, 32, 32);
-
 
         initMap();
         renderMap();
         initEvent();
 
+
+        paneMap.getTransforms().add(new Scale(scale, scale));
     }
 
     private void initEvent() {
@@ -291,11 +301,13 @@ public class MapEditorController extends AbstractController {
     /**
      * Outer event call when tile selection change
      *
-     * @param tileLayer
+     * @param message
      */
-    public void onChangeTileSelection(TileLayer tileLayer) {
-        this.tileSelected = tileLayer;
-        clearRectangle();
+    public void onChangeTileSelection(AbstractMessage message) {
+        if (message instanceof TileSelectedMessage) {
+            this.tileSelected = ((TileSelectedMessage) message).getLayer();
+            clearRectangle();
+        }
     }
 
 

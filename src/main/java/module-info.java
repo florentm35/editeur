@@ -6,7 +6,9 @@ module sample {
     requires log4j;
 
     exports fr.florent.controller;
-    exports fr.florent.controller.editeur;
+    exports fr.florent.controller.core;
+    exports fr.florent.controller.editeur.mapeditor;
+    exports fr.florent.controller.editeur.tilepicker;
 
     opens fr.florent ;
 }

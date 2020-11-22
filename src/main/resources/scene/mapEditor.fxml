@@ -4,13 +4,18 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.control.Button?>
-<GridPane xmlns="http://javafx.com/javafx"
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.Group?>
+<Pane xmlns="http://javafx.com/javafx"
           xmlns:fx="http://javafx.com/fxml"
-          fx:controller="fr.florent.controller.editeur.MapEditorController">
-
-    <Pane fx:id="paneMap">
-        <GridPane fx:id="boxImage"
-                  GridPane.columnIndex="1">
-        </GridPane>
-    </Pane>
-</GridPane>
+          fx:controller="fr.florent.controller.editeur.mapeditor.MapEditorController">
+    <ScrollPane fx:id="scrollTileSet" GridPane.columnIndex="0">
+        <Group>
+            <Pane fx:id="paneMap">
+                <GridPane fx:id="boxImage"
+                          GridPane.columnIndex="1">
+                </GridPane>
+            </Pane>
+        </Group>
+    </ScrollPane>
+</Pane>

@@ -1,8 +1,10 @@
-package fr.florent.controller.editeur;
+package fr.florent.controller.editeur.tilepicker;
 
+import fr.florent.composant.message.MessageSystem;
 import fr.florent.controller.AbstractController;
-import fr.florent.controller.Controller;
+import fr.florent.controller.core.Controller;
 import fr.florent.controller.editeur.event.IActionTileSelect;
+import fr.florent.controller.editeur.tilepicker.message.TileSelectedMessage;
 import fr.florent.model.editeur.layer.TileLayer;
 import fr.florent.model.editeur.tile.Tile;
 import fr.florent.model.selection.Area;
@@ -32,9 +34,6 @@ public class TilePickerController extends AbstractController {
     public ImageView tilesetImage;
     public ScrollPane scrollTileSet;
     public Pane paneTileset;
-
-    private IActionTileSelect onSelect;
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -115,9 +114,11 @@ public class TilePickerController extends AbstractController {
             }
             xLayer++;
         }
-        if (onSelect != null) {
-            onSelect.action(layer);
-        }
+
+        TileSelectedMessage message = new TileSelectedMessage();
+        message.setLayer(layer);
+
+        MessageSystem.getInstance().notify(message);
     }
 
     private void clearSelection(List<Rectangle> grid) {
@@ -179,15 +180,5 @@ public class TilePickerController extends AbstractController {
 
         }
     }
-
-    /**
-     * Event tile selection
-     *
-     * @param onSelect
-     */
-    public void setOnSelect(IActionTileSelect onSelect) {
-        this.onSelect = onSelect;
-    }
-
 
 }
