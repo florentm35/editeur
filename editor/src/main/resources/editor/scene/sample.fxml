@@ -1,0 +1,10 @@
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<HBox fx:controller="fr.florent.editor.controller.Controller"
+      xmlns:fx="http://javafx.com/fxml"
+      style="-fx-background-color: grey" >
+    <StackPane fx:id="leftPane"/>
+    <StackPane fx:id="centerPane"/>
+    <StackPane fx:id="rightPane"/>
+</HBox>
