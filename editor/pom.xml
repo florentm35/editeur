@@ -57,7 +57,9 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <dependency>
+
+
+        <!--<dependency>
             <groupId>fr.florent</groupId>
             <artifactId>map-editor</artifactId>
             <version>1.0-SNAPSHOT</version>
@@ -71,6 +73,6 @@
             <groupId>fr.florent</groupId>
             <artifactId>map-core</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
+        </dependency>-->
     </dependencies>
 </project>

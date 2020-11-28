@@ -5,11 +5,12 @@ module editor {
     requires javafx.base;
     requires log4j;
     requires editor.core;
+    requires reflections;
 
-    // Before OSGI
-    requires tile.picker;
-    requires map.editor;
-    requires map.core;
+    // Before runtime load
+    //requires tile.picker;
+    //requires map.editor;
+    //requires map.core;
 
     exports fr.florent.editor.controller;
 

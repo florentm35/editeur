@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-@Screen(EnumScreenPosition.LEFT)
+@Screen(value = EnumScreenPosition.LEFT,ressource = TilePickerController.RESSOURCE_VIEW_PATH)
 public class TilePickerController extends AbstractController {
 
     private static final Logger LOGGER = Logger.getLogger(TilePickerController.class.getName());

@@ -5,6 +5,8 @@ import fr.florent.editor.core.controller.AbstractController;
 import fr.florent.editor.controller.Controller;
 import fr.florent.editor.core.message.MessageSystem;
 import fr.florent.editor.core.message.WindowsResizeMessage;
+import fr.florent.editor.core.properties.PropertiesUtil;
+import fr.florent.editor.core.ressource.ResourceLoader;
 import fr.florent.editor.ressource.EditorRessourceLoader;
 import javafx.application.Application;
 import javafx.stage.Screen;
@@ -19,6 +21,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        loadModule();
 
         Stage stage = AbstractController.getStage(
                 EditorRessourceLoader.getResource(Controller.RESSOURCE_VIEW_PATH),
@@ -46,6 +49,11 @@ public class Main extends Application {
 
     }
 
+    public void loadModule(){
+        PropertiesUtil.load(this.getClass().getClassLoader(), "application.properties");
+        String pathModule = PropertiesUtil.getValue(PropertiesUtil.KEY_MODULE_PATH);
+        ResourceLoader.getInstance().init(pathModule);
+    }
 
     public static void main(String[] args) {
         Application.launch(args);

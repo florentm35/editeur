@@ -9,6 +9,5 @@ module tile.picker {
 
     exports fr.florent.tilepicker;
     exports fr.florent.tilepicker.message;
-    exports fr.florent.tilepicker.ressource;
 
 }

@@ -16,7 +16,14 @@ public abstract class AbstractController implements Initializable {
     }
 
     public static FXMLLoader getLoader(URL url) throws IOException {
-        FXMLLoader loader =  new FXMLLoader(url);
+        return getLoader(null, url);
+    }
+
+    public static FXMLLoader getLoader(ClassLoader classLoader, URL url) throws IOException {
+        FXMLLoader loader = new FXMLLoader(url);
+        if (classLoader != null) {
+            loader.setClassLoader(classLoader);
+        }
         loader.load();
         return loader;
     }

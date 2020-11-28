@@ -38,5 +38,11 @@
             <version>${javafx.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>${org.reflections.version}</version>
+        </dependency>
     </dependencies>
 </project>

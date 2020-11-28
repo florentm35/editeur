@@ -9,6 +9,5 @@ module map.editor {
     requires tile.picker;
 
     exports fr.florent.map.editor.controller;
-    exports fr.florent.map.editor.ressource;
 
 }

@@ -1,8 +1,8 @@
-package fr.florent.editor.core.cache;
+package fr.florent.editor.core  .cache;
 
 import java.util.WeakHashMap;
 
-public class RessourceCache {
+public class ResourceCache {
 
     private static WeakHashMap<String, IRessourceId> cache = new WeakHashMap<>();
 

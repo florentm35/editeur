@@ -35,7 +35,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-@Screen(EnumScreenPosition.CENTER)
+@Screen(value = EnumScreenPosition.CENTER, ressource = MapEditorController.RESSOURCE_VIEW_PATH)
 public class MapEditorController extends AbstractController {
 
     private static final Logger LOGGER = Logger.getLogger(MapEditorController.class.getName());

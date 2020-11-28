@@ -7,10 +7,7 @@ import fr.florent.editor.core.message.AbstractMessage;
 import fr.florent.editor.core.message.MessageSystem;
 import fr.florent.editor.core.message.SceneResizeMessage;
 import fr.florent.editor.core.message.WindowsResizeMessage;
-import fr.florent.map.editor.controller.MapEditorController;
-import fr.florent.map.editor.ressource.MapEditorRessourceLoader;
-import fr.florent.tilepicker.TilePickerController;
-import fr.florent.tilepicker.ressource.TilePickerRessourceLoader;
+import fr.florent.editor.core.ressource.ResourceLoader;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import org.apache.log4j.Logger;
@@ -36,8 +33,17 @@ public class Controller extends AbstractController {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        addScene(TilePickerRessourceLoader.getResource(TilePickerController.RESSOURCE_VIEW_PATH));
-        addScene(MapEditorRessourceLoader.getResource(MapEditorController.RESSOURCE_VIEW_PATH));
+
+        ResourceLoader loader = ResourceLoader.getInstance();
+
+        for (Class tClass :  loader.getTypesAnnotatedWith(Screen.class)) {
+            Screen annotation = (Screen) tClass.getAnnotation(Screen.class);
+
+            URL urlRessource = loader.getRessource(tClass,annotation.ressource());
+
+            addScene(loader.getClassLoader(), urlRessource);
+
+        }
 
         MessageSystem.getInstance().addObserver(WindowsResizeMessage.class.getName(), this::onWindowsResize);
     }
@@ -56,9 +62,9 @@ public class Controller extends AbstractController {
         }
     }
 
-    public void addScene(URL ressource) {
+    public void addScene(ClassLoader classLoader, URL ressource) {
         try {
-            FXMLLoader loader = AbstractController.getLoader(ressource);
+            FXMLLoader loader = AbstractController.getLoader(classLoader, ressource);
             AbstractController controller = loader.getController();
             Pane node = loader.getRoot();
 

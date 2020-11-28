@@ -2,7 +2,7 @@ package fr.florent.map.core.model.tile;
 
 
 import fr.florent.editor.core.cache.IRessourceId;
-import fr.florent.editor.core.cache.RessourceCache;
+import fr.florent.editor.core.cache.ResourceCache;
 import fr.florent.map.core.model.tileset.TileSet;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
@@ -18,7 +18,7 @@ public class Tile extends AbstractTile {
 
         this.id = tileSet.getId() + ";" + x + ";" + y;
 
-        IRessourceId cacheRessource = RessourceCache.get(this);
+        IRessourceId cacheRessource = ResourceCache.get(this);
         if (cacheRessource != null) {
             Tile tmp = (Tile) cacheRessource;
             this.cacheImage = tmp.getCacheImage();
@@ -32,7 +32,7 @@ public class Tile extends AbstractTile {
                     tileSet.getTileWidth(), tileSet.getTileHeight());
             cacheImage = newImage;
 
-            RessourceCache.put(this);
+            ResourceCache.put(this);
         }
     }
 
