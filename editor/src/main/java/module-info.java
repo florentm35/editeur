@@ -6,11 +6,8 @@ module editor {
     requires log4j;
     requires editor.core;
     requires reflections;
-
-    // Before runtime load
-    //requires tile.picker;
-    //requires map.editor;
-    //requires map.core;
+    // TODO:  GSon requiered from map-core delete this
+    requires java.sql;
 
     exports fr.florent.editor.controller;
 

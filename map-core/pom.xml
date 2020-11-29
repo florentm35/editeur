@@ -22,7 +22,6 @@
                     <release>${maven.compiler.release}</release>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -35,6 +34,23 @@
     </build>
 
     <dependencies>
+        <!-- TODO : Move Gson dependance-->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+            <scope>provided</scope>
+
+        </dependency>
+        <!-- TODO : Move commons-io dependance-->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.8.0</version>
+            <scope>provided</scope>
+
+        </dependency>
+
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -55,6 +71,7 @@
             <scope>provided</scope>
         </dependency>
 
+
         <dependency>
             <groupId>fr.florent</groupId>
             <artifactId>editor-core</artifactId>
@@ -68,5 +85,6 @@
             <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 </project>

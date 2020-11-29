@@ -2,6 +2,9 @@ module map.core {
 
     requires javafx.graphics;
     requires editor.core;
+    requires org.apache.commons.io;
+    requires com.google.gson;
+
 
     exports fr.florent.map.core.event;
     exports fr.florent.map.core.helper;

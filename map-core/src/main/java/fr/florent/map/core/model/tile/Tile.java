@@ -13,7 +13,7 @@ public class Tile extends AbstractTile {
     private TileSet tileSet;
 
 
-    // TODO : voir a déplacer dans une Factory, le modèle n'a pas à gérer le cache
+    // TODO : Move cache work in Helper/Factory
     public Tile(TileSet tileSet, double x, double y) {
 
         this.id = tileSet.getId() + ";" + x + ";" + y;

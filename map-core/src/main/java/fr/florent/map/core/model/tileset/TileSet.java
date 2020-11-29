@@ -2,13 +2,19 @@ package fr.florent.map.core.model.tileset;
 
 import javafx.scene.image.Image;
 
-public class TileSet extends AbstractTileSet{
+public class TileSet extends AbstractTileSet {
     private Image imagePng;
 
     private int tileWidth;
     private int tileHeight;
 
+    private String name;
+
     public TileSet() {
+    }
+
+    public TileSet(String id) {
+        this.id = id;
     }
 
     public TileSet(Image imagePng, int tileWidth, int tileHeight) {
@@ -48,5 +54,13 @@ public class TileSet extends AbstractTileSet{
                 ", tileHeight=" + tileHeight +
                 ", id='" + id + '\'' +
                 '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

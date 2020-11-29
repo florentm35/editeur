@@ -2,6 +2,7 @@ package fr.florent.editor.core.ressource;
 
 import fr.florent.editor.core.annotation.Screen;
 import fr.florent.editor.core.exception.RuntimeEditorException;
+import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.reflections.util.ConfigurationBuilder;
 
@@ -10,9 +11,13 @@ import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Set;
 
+
 public class ResourceLoader {
+
+    private static final Logger LOGGER = Logger.getLogger(ResourceLoader.class.getName());
 
     private static ResourceLoader instance = null;
 
@@ -21,19 +26,18 @@ public class ResourceLoader {
     private ResourceLoader() {
     }
 
-    public static ResourceLoader getInstance(){
-        if(instance == null){
+    public static ResourceLoader getInstance() {
+        if (instance == null) {
             instance = new ResourceLoader();
         }
         return instance;
     }
 
-    public void init(String path){
+    public void init(String... path) {
         classLoader = getModuleClassLoader(path);
     }
 
-    public URL getRessource(Class tClass, String ressource){
-
+    public URL getRessource(Class tClass, String ressource) {
 
         try {
             return classLoader.loadClass(tClass.getName()).getResource(ressource);
@@ -41,7 +45,8 @@ public class ResourceLoader {
             throw new RuntimeEditorException(e);
         }
     }
-    public Set<Class<?>> getTypesAnnotatedWith(Class<? extends Annotation> annotationCLass ){
+
+    public Set<Class<?>> getTypesAnnotatedWith(Class<? extends Annotation> annotationCLass) {
         Reflections reflections = new Reflections(
                 ConfigurationBuilder.build(classLoader)
         );
@@ -49,36 +54,32 @@ public class ResourceLoader {
 
     }
 
-    private URLClassLoader getModuleClassLoader(String path) {
+    private URLClassLoader getModuleClassLoader(String... path) {
 
         if (path == null) {
             return null;
         }
 
-        File moduleFolder = new File(path);
+        ArrayList<URL> listJar = new ArrayList<>();
 
-        if (moduleFolder.exists() && moduleFolder.isDirectory()) {
-
-            File[] child = moduleFolder.listFiles();
-            URL[] childURL = new URL[child.length];
-            int i = 0;
-            for (File file : child) {
+        for (String subPath : path) {
+            LOGGER.info("Chargement des jar :" + subPath);
+            File moduleFolder = new File(subPath);
+            for (File file : moduleFolder.listFiles()) {
                 try {
-                    childURL[i] = file.toURI().toURL();
+                    listJar.add(file.toURI().toURL());
+                    LOGGER.info(file.getName());
                 } catch (MalformedURLException e) {
                     throw new RuntimeEditorException(e);
                 }
-                i++;
             }
-
-
-            URLClassLoader classLoader = new URLClassLoader(
-                    childURL
-            );
-
-            return classLoader;
         }
-        return null;
+        URL[] tmp = new URL[listJar.size()];
+        URLClassLoader classLoader = new URLClassLoader(
+                listJar.toArray(tmp)
+        );
+        return classLoader;
+
     }
 
     public URLClassLoader getClassLoader() {

@@ -1,13 +1,21 @@
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.SubScene?>
-<StackPane fx:controller="fr.florent.tilepicker.TilePickerController"
-            xmlns:fx="http://javafx.com/fxml" fx:id="parent">
-
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<VBox fx:controller="fr.florent.tilepicker.TilePickerController"
+      xmlns:fx="http://javafx.com/fxml" fx:id="parent">
+    <HBox alignment="CENTER_LEFT">
+        <Label text="TileSet :"/>
+        <ComboBox fx:id="tileSetComboBox"/>
+        <MenuButton text="..." fx:id="tileSelectOption" styleClass="no-arrow"/>
+    </HBox>
     <ScrollPane fx:id="scrollTileSet" vbarPolicy="ALWAYS">
         <Pane fx:id="paneTileset">
             <ImageView fx:id="tilesetImage"/>
         </Pane>
     </ScrollPane>
-</StackPane>
+</VBox>

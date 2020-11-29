@@ -13,10 +13,11 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 
+import java.io.File;
+
 public class Main extends Application {
 
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
-
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -46,13 +47,22 @@ public class Main extends Application {
 
         MessageSystem.getInstance().notify(new WindowsResizeMessage(width, height));
 
-
     }
 
-    public void loadModule(){
+    public void loadModule() {
         PropertiesUtil.load(this.getClass().getClassLoader(), "application.properties");
+        String path = PropertiesUtil.getValue(PropertiesUtil.KEY_PATH);
         String pathModule = PropertiesUtil.getValue(PropertiesUtil.KEY_MODULE_PATH);
-        ResourceLoader.getInstance().init(pathModule);
+
+        String libModule = PropertiesUtil.getValue(PropertiesUtil.KEY_LIB_PATH);
+
+
+        ResourceLoader.getInstance().init(
+                path + File.separator + pathModule,
+                path + File.separator + libModule
+        );
+
+
     }
 
     public static void main(String[] args) {

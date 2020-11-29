@@ -1,4 +1,5 @@
-import fr.florent.map.core.helper.AreaHelper;
+package fr.florent.map.core.helper;
+
 import fr.florent.map.core.model.selection.Area;
 import fr.florent.map.core.model.selection.Point2D;
 import org.junit.Assert;

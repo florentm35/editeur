@@ -36,10 +36,10 @@ public class Controller extends AbstractController {
 
         ResourceLoader loader = ResourceLoader.getInstance();
 
-        for (Class tClass :  loader.getTypesAnnotatedWith(Screen.class)) {
+        for (Class tClass : loader.getTypesAnnotatedWith(Screen.class)) {
             Screen annotation = (Screen) tClass.getAnnotation(Screen.class);
 
-            URL urlRessource = loader.getRessource(tClass,annotation.ressource());
+            URL urlRessource = loader.getRessource(tClass, annotation.ressource());
 
             addScene(loader.getClassLoader(), urlRessource);
 
@@ -63,36 +63,34 @@ public class Controller extends AbstractController {
     }
 
     public void addScene(ClassLoader classLoader, URL ressource) {
-        try {
-            FXMLLoader loader = AbstractController.getLoader(classLoader, ressource);
-            AbstractController controller = loader.getController();
-            Pane node = loader.getRoot();
 
-            Screen screenAnnotation = controller.getClass().getAnnotation(Screen.class);
+        FXMLLoader loader = AbstractController.getLoader(classLoader, ressource);
+        AbstractController controller = loader.getController();
+        Pane node = loader.getRoot();
 
-            if (screenAnnotation != null) {
-                switch (screenAnnotation.value()) {
-                    case LEFT:
-                        leftPane.getChildren().add(node);
-                        node.widthProperty().addListener((obs, oldVal, newVal) -> {
-                            leftPaneWidth = newVal.doubleValue();
-                        });
-                        break;
-                    case CENTER:
-                        centerPane.getChildren().add(node);
-                        break;
-                    case RIGHT:
-                        rightPane.getChildren().add(node);
-                        node.widthProperty().addListener((obs, oldVal, newVal) -> {
-                            rightPaneWidth = newVal.doubleValue();
-                        });
-                        break;
-                }
+        Screen screenAnnotation = controller.getClass().getAnnotation(Screen.class);
+
+        if (screenAnnotation != null) {
+            switch (screenAnnotation.value()) {
+                case LEFT:
+                    leftPane.getChildren().add(node);
+                    node.widthProperty().addListener((obs, oldVal, newVal) -> {
+                        leftPaneWidth = newVal.doubleValue();
+                    });
+                    break;
+                case CENTER:
+                    centerPane.getChildren().add(node);
+                    break;
+                case RIGHT:
+                    rightPane.getChildren().add(node);
+                    node.widthProperty().addListener((obs, oldVal, newVal) -> {
+                        rightPaneWidth = newVal.doubleValue();
+                    });
+                    break;
             }
-
-        } catch (IOException e) {
-            throw new RuntimeException("Impossible de charger TilePickerController.RESSOURCE_VIEW_PATH", e);
         }
+
+
     }
 
 
