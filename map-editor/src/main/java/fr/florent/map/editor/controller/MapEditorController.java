@@ -27,6 +27,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -51,6 +52,7 @@ public class MapEditorController extends AbstractController {
     public GridPane boxImage;
     public Pane paneMap;
     public ScrollPane scrollPane;
+    public HBox hbox;
 
     private Map map;
     private TileLayer tileSelected;
@@ -61,6 +63,7 @@ public class MapEditorController extends AbstractController {
 
     private boolean ctrlPressed;
     private double scale = 1;
+
 
 
     @Override
@@ -95,8 +98,8 @@ public class MapEditorController extends AbstractController {
     private void initPaneMapEvent() {
         paneMap.setOnMouseEntered(e -> paneMap.requestFocus());
 
+
         paneMap.setOnKeyPressed(e -> {
-            LOGGER.info("e.getCode() : " + e.getCode());
             if (e.getCode() == KeyCode.CONTROL) {
                 ctrlPressed = true;
             }
@@ -109,12 +112,13 @@ public class MapEditorController extends AbstractController {
         });
 
         paneMap.setOnScroll(e -> {
-            LOGGER.info(String.format("%s : %b", "ctrlPressed", ctrlPressed));
             if (ctrlPressed) {
-
                 scale += e.getDeltaY() > 0 ? 0.1 : -0.1;
                 paneMap.getTransforms().clear();
-                paneMap.getTransforms().add(new Scale(scale, scale));
+                Scale scaleTransform = new Scale(scale, scale);
+                scaleTransform.setPivotX(paneMap.getWidth()/2);
+                scaleTransform.setPivotY(paneMap.getHeight()/2);
+                paneMap.getTransforms().add(scaleTransform);
             }
         });
     }

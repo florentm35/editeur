@@ -11,9 +11,9 @@
                 AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="0"
                 AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
         <Group>
-            <VBox alignment="CENTER" minWidth="${scrollPane.viewportBounds.width}"
+            <VBox alignment="CENTER"
                   minHeight="${scrollPane.viewportBounds.height}">
-                <HBox alignment="CENTER">
+                <HBox alignment="CENTER" fx:id="hbox" minWidth="${scrollPane.viewportBounds.width}">
                     <Pane fx:id="paneMap">
                         <GridPane fx:id="boxImage"
                                   GridPane.columnIndex="1">
