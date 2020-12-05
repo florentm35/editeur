@@ -3,18 +3,24 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.*?>
-<StackPane xmlns="http://javafx.com/javafx"
-           xmlns:fx="http://javafx.com/fxml"
-           fx:controller="fr.florent.map.editor.controller.MapEditorController" 
-           fx:id="parent">
-    <!-- TODO : Gérer le scroll -->
-    <ScrollPane fx:id="scrollPane"  >
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fr.florent.map.editor.controller.MapEditorController"
+            fx:id="parent">
+    <ScrollPane fx:id="scrollPane" styleClass="transparent-background"
+                AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="0"
+                AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
         <Group>
-            <Pane fx:id="paneMap" >
-                <GridPane fx:id="boxImage" 
-                          GridPane.columnIndex="1">
-                </GridPane>
-            </Pane>
+            <VBox alignment="CENTER" minWidth="${scrollPane.viewportBounds.width}"
+                  minHeight="${scrollPane.viewportBounds.height}">
+                <HBox alignment="CENTER">
+                    <Pane fx:id="paneMap">
+                        <GridPane fx:id="boxImage"
+                                  GridPane.columnIndex="1">
+                        </GridPane>
+                    </Pane>
+                </HBox>
+            </VBox>
         </Group>
     </ScrollPane>
-</StackPane>
+</AnchorPane>

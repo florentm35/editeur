@@ -8,6 +8,7 @@ import fr.florent.editor.core.event.util.IActionDoubleIterator;
 import fr.florent.editor.core.message.AbstractMessage;
 import fr.florent.editor.core.message.MessageSystem;
 import fr.florent.editor.core.message.SceneResizeMessage;
+import fr.florent.editor.core.ressource.ResourceLoader;
 import fr.florent.map.core.helper.AreaHelper;
 import fr.florent.map.core.helper.EventSelectionAndDragged;
 import fr.florent.map.core.model.Map;
@@ -24,9 +25,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
@@ -44,9 +45,11 @@ public class MapEditorController extends AbstractController {
     public static final String RESSOURCE_VIEW_PATH = "/map/editor/scene/mapEditor.fxml";
     public static final String RESSOURCE_TITLE = "Editor";
 
+    public AnchorPane parent;
+
+
     public GridPane boxImage;
     public Pane paneMap;
-    public StackPane parent;
     public ScrollPane scrollPane;
 
     private Map map;
@@ -62,6 +65,9 @@ public class MapEditorController extends AbstractController {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        parent.getStylesheets().add(ResourceLoader.getInstance().getRessource(this.getClass(), "/map/editor/css/mapEditor.css").toString());
+
 
         MessageSystem.getInstance().addObserver(TileSelectedMessage.class.getName(), this::onChangeTileSelection);
 
