@@ -7,8 +7,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <VBox fx:controller="fr.florent.tilepicker.TilePickerController"
-      xmlns:fx="http://javafx.com/fxml" fx:id="parent">
-    <HBox alignment="CENTER_LEFT">
+      xmlns:fx="http://javafx.com/fxml" fx:id="parent"
+        styleClass="pane-style">
+    <HBox alignment="CENTER_LEFT" minWidth="-Infinity">
         <Label text="TileSet :"/>
         <ComboBox fx:id="tileSetComboBox"/>
         <MenuButton text="..." fx:id="tileSelectOption" styleClass="no-arrow"/>

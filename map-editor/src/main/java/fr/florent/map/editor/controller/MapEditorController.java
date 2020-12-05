@@ -23,6 +23,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -55,7 +56,9 @@ public class MapEditorController extends AbstractController {
 
     private int selectLayerId = -1;
 
+    private boolean ctrlPressed;
     private double scale = 1;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -64,23 +67,50 @@ public class MapEditorController extends AbstractController {
 
         Image imagePng = new Image(getClass().getResourceAsStream("/tileset.png"));
         this.tileSet = new TileSet(imagePng, 32, 32);
-
         initMap();
         renderMap();
         initEvent();
 
-        paneMap.getTransforms().add(new Scale(scale, scale));
+        initPaneMapEvent();
+
 
         MessageSystem.getInstance().addObserver(SceneResizeMessage.getKey(EnumScreenPosition.CENTER), this::onWindowsResize);
 
-        paneMap.widthProperty().addListener((obs, oldVal, newVal)  -> {
+        paneMap.widthProperty().addListener((obs, oldVal, newVal) -> {
             scrollPane.setMaxWidth(newVal.doubleValue() + 2);
         });
 
-        paneMap.heightProperty().addListener((obs, oldVal, newVal)  -> {
+        paneMap.heightProperty().addListener((obs, oldVal, newVal) -> {
             scrollPane.setMaxHeight(newVal.doubleValue() + 2);
         });
 
+    }
+
+    private void initPaneMapEvent() {
+        paneMap.setOnMouseEntered(e -> paneMap.requestFocus());
+
+        paneMap.setOnKeyPressed(e -> {
+            LOGGER.info("e.getCode() : " + e.getCode());
+            if (e.getCode() == KeyCode.CONTROL) {
+                ctrlPressed = true;
+            }
+        });
+
+        paneMap.setOnKeyReleased(e -> {
+            if (e.getCode() == KeyCode.CONTROL) {
+                ctrlPressed = false;
+            }
+        });
+
+        paneMap.setOnScroll(e -> {
+            LOGGER.info(String.format("%s : %b", "ctrlPressed", ctrlPressed));
+            if (ctrlPressed) {
+
+                scale += e.getDeltaY() > 0 ? 0.1 : -0.1;
+                paneMap.getTransforms().clear();
+                paneMap.getTransforms().add(new Scale(scale, scale));
+            }
+        });
     }
 
     public void onWindowsResize(AbstractMessage message) {

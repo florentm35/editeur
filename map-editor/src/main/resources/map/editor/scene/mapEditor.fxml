@@ -5,12 +5,13 @@
 <?import javafx.scene.layout.*?>
 <StackPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
-           fx:controller="fr.florent.map.editor.controller.MapEditorController"
+           fx:controller="fr.florent.map.editor.controller.MapEditorController" 
            fx:id="parent">
-    <ScrollPane fx:id="scrollPane">
+    <!-- TODO : Gérer le scroll -->
+    <ScrollPane fx:id="scrollPane"  >
         <Group>
-            <Pane fx:id="paneMap">
-                <GridPane fx:id="boxImage"
+            <Pane fx:id="paneMap" >
+                <GridPane fx:id="boxImage" 
                           GridPane.columnIndex="1">
                 </GridPane>
             </Pane>

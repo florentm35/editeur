@@ -20,10 +20,8 @@ public class Main extends Application {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-
+    public void start(Stage primaryStage) {
         loadModule();
-
         Stage stage = AbstractController.getStage(
                 EditorRessourceLoader.getResource(Controller.RESSOURCE_VIEW_PATH),
                 "Ma fenêtre", (int) Screen.getPrimary().getBounds().getWidth() - 200,
@@ -31,6 +29,11 @@ public class Main extends Application {
 
         stage.show();
 
+        eventWindowSize(stage);
+
+    }
+
+    private void eventWindowSize(Stage stage) {
         stage.widthProperty().addListener((obs, oldVal, newVal) -> {
             double width = newVal.doubleValue();
             double height = stage.getHeight() - (Double.isNaN(stage.getY()) ? 0 : stage.getY());
@@ -46,7 +49,6 @@ public class Main extends Application {
         double height = stage.getHeight() - (Double.isNaN(stage.getY()) ? 0 : stage.getY());
 
         MessageSystem.getInstance().notify(new WindowsResizeMessage(width, height));
-
     }
 
     public void loadModule() {
