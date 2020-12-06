@@ -1,0 +1,15 @@
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.layout.VBox?>
+<VBox fx:controller="fr.florent.editor.controller.EditorController" fx:id="parent"
+      xmlns:fx="http://javafx.com/fxml"
+      style="-fx-background-color: grey">
+    <MenuBar fx:id="menubar"/>
+    <HBox>
+        <StackPane styleClass="border" fx:id="leftPane"/>
+        <StackPane styleClass="border" fx:id="centerPane"/>
+        <StackPane styleClass="border" fx:id="rightPane"/>
+    </HBox>
+</VBox>

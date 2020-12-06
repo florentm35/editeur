@@ -86,7 +86,7 @@ public class TilePickerController extends AbstractController {
         List<TileSet> lstTileSet = TileSetHelper.getListTileSet();
 
         for (TileSet tileSet : lstTileSet) {
-            tileSetComboBox.getItems().add(new Item(tileSet, tileSet.getName()));
+            tileSetComboBox.getItems().add(new Item<>(tileSet, tileSet.getName()));
         }
 
         tileSetComboBox.getSelectionModel().selectedIndexProperty().addListener((ov, oldvalue, newvalue) -> {
@@ -102,7 +102,6 @@ public class TilePickerController extends AbstractController {
                 );
             }
         });
-
     }
 
 

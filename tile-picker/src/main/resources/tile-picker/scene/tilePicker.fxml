@@ -8,12 +8,14 @@
 <?import javafx.scene.layout.VBox?>
 <VBox fx:controller="fr.florent.tilepicker.TilePickerController"
       xmlns:fx="http://javafx.com/fxml" fx:id="parent"
-        styleClass="pane-style">
+      styleClass="pane-style">
+
     <HBox alignment="CENTER_LEFT" minWidth="-Infinity">
-        <Label text="TileSet :"/>
+        <Label text="TileSet :" styleClass="padding-5"/>
         <ComboBox fx:id="tileSetComboBox"/>
         <MenuButton text="..." fx:id="tileSelectOption" styleClass="no-arrow"/>
     </HBox>
+
     <ScrollPane fx:id="scrollTileSet" vbarPolicy="ALWAYS">
         <Pane fx:id="paneTileset">
             <ImageView fx:id="tilesetImage"/>
