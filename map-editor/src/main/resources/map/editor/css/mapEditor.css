@@ -21,3 +21,16 @@
 #tabPane{
     -fx-close-tab-animation: none;
 }
+
+.no-arrow > .arrow-button {
+    -fx-padding: 0;
+}
+.no-arrow > .arrow-button > .arrow {
+    -fx-padding: 0;
+}
+.min-width-100{
+    -fx-min-width: 100;
+}
+.padding-5{
+    -fx-padding: 5;
+}

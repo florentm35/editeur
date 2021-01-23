@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.MenuButton?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="fr.florent.map.editor.controller.MapEditorController"
@@ -40,5 +41,10 @@
             </ScrollPane>
         </AnchorPane>
     </VBox>
+
+    <HBox  AnchorPane.topAnchor="0"
+           AnchorPane.rightAnchor="0">
+        <MenuButton text="..." fx:id="mapParamButton" styleClass="no-arrow"/>
+    </HBox>
 
 </AnchorPane>

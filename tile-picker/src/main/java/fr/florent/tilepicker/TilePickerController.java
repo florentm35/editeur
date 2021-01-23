@@ -202,8 +202,7 @@ public class TilePickerController extends AbstractController {
             xLayer++;
         }
 
-        TileSelectedMessage message = new TileSelectedMessage();
-        message.setLayer(layer);
+        TileSelectedMessage message = new TileSelectedMessage(layer);
 
         MessageSystem.getInstance().notify(message);
     }

@@ -23,6 +23,15 @@ public class Map {
         this.tileHeight = tileHeight;
     }
 
+    public void resize(int width, int height) {
+        this.width = width;
+        this.height = height;
+
+        for (Layer layer : layers) {
+            layer.resize(width, height);
+        }
+    }
+
     public <T> Layer<T> addlayer(Layer<T> layer) {
         layers.add(layer);
         return layer;

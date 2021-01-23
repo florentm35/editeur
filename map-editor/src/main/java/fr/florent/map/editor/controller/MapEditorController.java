@@ -18,42 +18,50 @@ import fr.florent.map.core.model.map.MapHelper;
 import fr.florent.map.core.model.selection.Area;
 import fr.florent.map.core.model.selection.Point2D;
 import fr.florent.map.core.model.tile.Tile;
+import fr.florent.map.editor.controller.message.MapResizeMessage;
+import fr.florent.tilepicker.TilePickerController;
 import fr.florent.tilepicker.message.TileSelectedMessage;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+//TODO : refactor constante string (label, xml path, css path, ...)
 @Screen(value = EnumScreenPosition.CENTER, ressource = MapEditorController.RESSOURCE_VIEW_PATH)
 public class MapEditorController extends AbstractController {
 
     private static final Logger LOGGER = Logger.getLogger(MapEditorController.class.getName());
 
     public static final String RESSOURCE_VIEW_PATH = "/map/editor/scene/mapEditor.fxml";
-    public static final String RESSOURCE_MAP_VIEW_PATH = "/map/editor/scene/map.fxml";
     public static final String RESSOURCE_TITLE = "Editor";
+
     public static final String ID_TAB_LAYER_ADD = "tabLayer+";
 
     public AnchorPane parent;
 
     public TabPane tabPane;
+    public MenuButton mapParamButton;
 
     public GridPane boxImage;
     public Pane paneMap;
@@ -74,9 +82,7 @@ public class MapEditorController extends AbstractController {
 
         parent.getStylesheets().add(ResourceLoader.getInstance().getRessource(this.getClass(), "/map/editor/css/mapEditor.css").toString());
 
-
         MessageSystem.getInstance().addObserver(TileSelectedMessage.class.getName(), this::onChangeTileSelection);
-
 
         initMap();
         initTabPaneLayer();
@@ -85,8 +91,13 @@ public class MapEditorController extends AbstractController {
 
         initPaneMapEvent();
 
+        initMapSettings();
+
 
         MessageSystem.getInstance().addObserver(SceneResizeMessage.getKey(EnumScreenPosition.CENTER), this::onWindowsResize);
+
+        MessageSystem.getInstance().addObserver(MapResizeMessage.class.getName(), this::onMapResize);
+
 
         paneMap.widthProperty().addListener((obs, oldVal, newVal) -> {
             scrollPane.setMaxWidth(newVal.doubleValue() + 2);
@@ -96,6 +107,24 @@ public class MapEditorController extends AbstractController {
             scrollPane.setMaxHeight(newVal.doubleValue() + 2);
         });
 
+    }
+
+    private void initMapSettings() {
+        MenuItem itemImport = new MenuItem("Settings");
+        itemImport.setOnAction(t -> {
+            ResourceLoader resourceLoader = ResourceLoader.getInstance();
+            FXMLLoader loader = AbstractController.getLoader(
+                    resourceLoader.getClassLoader(),
+                    resourceLoader.getRessource(ParamMapDialogController.class, "/map/editor/scene/paramMapDialog.fxml")
+            );
+
+            ParamMapDialogController controler = loader.getController();
+            controler.loadMap(map);
+            Stage stage = getStage(loader, String.format("Settings : %s", map.getTitle()), -1, -1);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
+        });
+        mapParamButton.getItems().add(itemImport);
     }
 
     private Tab addTab(Layer layer) {
@@ -189,6 +218,13 @@ public class MapEditorController extends AbstractController {
                 paneMap.getTransforms().add(scaleTransform);
             }
         });
+    }
+
+    public void onMapResize(AbstractMessage message) {
+        if (message instanceof MapResizeMessage) {
+            boxImage.getChildren().clear();
+            renderMap();
+        }
     }
 
     public void onWindowsResize(AbstractMessage message) {

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" fx:id="parent"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="fr.florent.map.editor.controller.ParamMapDialogController" styleClass="padding-5">
+    <HBox>
+        <Label text="Name" styleClass="min-width-100,padding-5"/>
+        <TextField fx:id="nameField"/>
+    </HBox>
+    <HBox>
+        <Label text="Tile width" styleClass="min-width-100,padding-5"/>
+        <TextField fx:id="tileWidthField" disable="true"/>
+    </HBox>
+    <HBox>
+        <Label text="Tile height" styleClass="min-width-100,padding-5"/>
+        <TextField fx:id="tileHeightField" disable="true"/>
+    </HBox>
+    <HBox>
+        <Label text="Number column" styleClass="min-width-100,padding-5"/>
+        <TextField fx:id="numberColumnField"/>
+    </HBox>
+    <HBox>
+        <Label text="Number line" styleClass="min-width-100,padding-5"/>
+        <TextField fx:id="numberLineField"/>
+    </HBox>
+    <HBox alignment="CENTER">
+        <Button text="Save" fx:id="saveButton"/>
+        <Button text="Cancel" fx:id="cancelButton"/>
+    </HBox>
+</VBox>
