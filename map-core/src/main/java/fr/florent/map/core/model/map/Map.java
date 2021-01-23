@@ -1,4 +1,4 @@
-package fr.florent.map.core.model;
+package fr.florent.map.core.model.map;
 
 import fr.florent.map.core.model.layer.Layer;
 
@@ -10,18 +10,26 @@ public class Map {
     private String title;
     private int width;
     private int height;
+    private int tileWidth;
+    private int tileHeight;
     private ArrayList<Layer> layers;
 
-    public Map(String title, int width, int height){
+    public Map(String title, int width, int height, int tileWidth, int tileHeight) {
         layers = new ArrayList<>();
         this.title = title;
         this.width = width;
         this.height = height;
+        this.tileWidth = tileWidth;
+        this.tileHeight = tileHeight;
     }
 
-    public <T> Layer<T> addlayer(Layer<T> layer){
+    public <T> Layer<T> addlayer(Layer<T> layer) {
         layers.add(layer);
         return layer;
+    }
+
+    public <T> void remove(Layer<T> layer) {
+        this.layers.remove(layer);
     }
 
     public List<Layer> getLayers() {
@@ -44,5 +52,11 @@ public class Map {
         return height;
     }
 
+    public int getTileWidth() {
+        return tileWidth;
+    }
 
+    public int getTileHeight() {
+        return tileHeight;
+    }
 }

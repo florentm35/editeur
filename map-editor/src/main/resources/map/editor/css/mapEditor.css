@@ -9,3 +9,15 @@
 .scroll-pane.transparent-background .viewport {
        -fx-background-color: transparent;
 }
+
+.padding-5{
+    -fx-padding: 5;
+}
+
+#paneMap {
+    -fx-border-color: black;
+}
+
+#tabPane{
+    -fx-close-tab-animation: none;
+}

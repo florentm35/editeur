@@ -11,23 +11,26 @@ import fr.florent.editor.core.message.SceneResizeMessage;
 import fr.florent.editor.core.ressource.ResourceLoader;
 import fr.florent.map.core.helper.AreaHelper;
 import fr.florent.map.core.helper.EventSelectionAndDragged;
-import fr.florent.map.core.model.Map;
+import fr.florent.map.core.model.map.Map;
 import fr.florent.map.core.model.layer.Layer;
 import fr.florent.map.core.model.layer.TileLayer;
+import fr.florent.map.core.model.map.MapHelper;
 import fr.florent.map.core.model.selection.Area;
 import fr.florent.map.core.model.selection.Point2D;
 import fr.florent.map.core.model.tile.Tile;
-import fr.florent.map.core.model.tileset.TileSet;
 import fr.florent.tilepicker.message.TileSelectedMessage;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -44,26 +47,26 @@ public class MapEditorController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(MapEditorController.class.getName());
 
     public static final String RESSOURCE_VIEW_PATH = "/map/editor/scene/mapEditor.fxml";
+    public static final String RESSOURCE_MAP_VIEW_PATH = "/map/editor/scene/map.fxml";
     public static final String RESSOURCE_TITLE = "Editor";
+    public static final String ID_TAB_LAYER_ADD = "tabLayer+";
 
     public AnchorPane parent;
 
+    public TabPane tabPane;
 
     public GridPane boxImage;
     public Pane paneMap;
     public ScrollPane scrollPane;
-    public HBox hbox;
 
     private Map map;
     private TileLayer tileSelected;
-    private TileSet tileSet;
     private Rectangle selectionMask;
 
     private int selectLayerId = -1;
 
     private boolean ctrlPressed;
     private double scale = 1;
-
 
 
     @Override
@@ -74,9 +77,9 @@ public class MapEditorController extends AbstractController {
 
         MessageSystem.getInstance().addObserver(TileSelectedMessage.class.getName(), this::onChangeTileSelection);
 
-        Image imagePng = new Image(getClass().getResourceAsStream("/tileset.png"));
-        this.tileSet = new TileSet(imagePng, 32, 32);
+
         initMap();
+        initTabPaneLayer();
         renderMap();
         initEvent();
 
@@ -95,6 +98,71 @@ public class MapEditorController extends AbstractController {
 
     }
 
+    private Tab addTab(Layer layer) {
+        int size = tabPane.getTabs().size();
+        return addTab(size - 1, layer);
+    }
+
+    private Tab addTab(int index, Layer layer) {
+        Tab tab = new Tab();
+        tabPane.getTabs().add(index, tab);
+        tab.setOnCloseRequest(event -> {
+            map.remove(layer);
+        });
+
+        // Rename all tab and exclude add tab
+        renameTab();
+
+        return tab;
+    }
+
+    private void renameTab() {
+        for (int i = 0; i < tabPane.getTabs().size() - 1; i++) {
+            tabPane.getTabs().get(i).setText(String.format("Layer %d", i + 1));
+        }
+    }
+
+    private void initTabPaneLayer() {
+
+        Tab newTab = new Tab("+");
+        newTab.setClosable(false);
+        newTab.setId(ID_TAB_LAYER_ADD);
+        tabPane.getTabs().add(newTab);
+
+        if (map.getLayers().size() > 0) {
+            for (int i = 0; i < map.getLayers().size(); i++) {
+                Layer layer = map.getLayers().get(i);
+
+                Tab tab = addTab(i, layer);
+            }
+        }
+
+        tabPane.getSelectionModel().selectedItemProperty().addListener(
+                this::onTabChanged
+        );
+
+        tabPane.getSelectionModel().select(0);
+
+
+    }
+
+    private void onTabChanged(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
+        if (ID_TAB_LAYER_ADD.equals(t1.getId())) {
+            Layer layer = MapHelper.addEmptylayer(map);
+            Tab tab = addTab(layer);
+            tab.setOnCloseRequest(event -> map.remove(layer));
+            int size = tabPane.getTabs().size();
+            if (size > 1) {
+                tabPane.getSelectionModel().select(size - 2);
+                selectLayerId = size - 2;
+            }
+
+        } else {
+            selectLayerId = tabPane.getTabs().indexOf(t1);
+        }
+    }
+
+    // TODO : rename
     private void initPaneMapEvent() {
         paneMap.setOnMouseEntered(e -> paneMap.requestFocus());
 
@@ -116,8 +184,8 @@ public class MapEditorController extends AbstractController {
                 scale += e.getDeltaY() > 0 ? 0.1 : -0.1;
                 paneMap.getTransforms().clear();
                 Scale scaleTransform = new Scale(scale, scale);
-                scaleTransform.setPivotX(paneMap.getWidth()/2);
-                scaleTransform.setPivotY(paneMap.getHeight()/2);
+                scaleTransform.setPivotX(paneMap.getWidth() / 2);
+                scaleTransform.setPivotY(paneMap.getHeight() / 2);
                 paneMap.getTransforms().add(scaleTransform);
             }
         });
@@ -131,14 +199,15 @@ public class MapEditorController extends AbstractController {
         }
     }
 
+    // TODO : rename
     private void initEvent() {
-        EventSelectionAndDragged eventDrag = new EventSelectionAndDragged(paneMap, map.getWidth() * tileSet.getTileWidth(), map.getHeight() * tileSet.getTileHeight());
+        EventSelectionAndDragged eventDrag = new EventSelectionAndDragged(paneMap, map.getWidth() * map.getTileWidth(), map.getHeight() * map.getTileHeight());
         eventDrag.setOnRelease(area -> {
             if (tileSelected != null && selectLayerId >= 0) {
                 Area maskArea = new Area(new Point2D(area.getBegin().getX(), area.getBegin().getY()),
                         new Point2D(area.getEnd().getX(), area.getEnd().getY()));
 
-                AreaHelper.convertAreaToGrid(maskArea, tileSet.getTileWidth(), tileSet.getTileHeight());
+                AreaHelper.convertAreaToGrid(maskArea, map.getTileWidth(), map.getTileHeight());
 
                 AreaHelper.calculateAbsoluteArea(maskArea, tileSelected.getWidth(), tileSelected.getHeight());
 
@@ -169,7 +238,7 @@ public class MapEditorController extends AbstractController {
                 Area maskArea = new Area(new Point2D(area.getBegin().getX(), area.getBegin().getY()),
                         new Point2D(area.getEnd().getX(), area.getEnd().getY()));
 
-                AreaHelper.convertAreaToGrid(maskArea, tileSet.getTileWidth(), tileSet.getTileHeight());
+                AreaHelper.convertAreaToGrid(maskArea, map.getTileWidth(), map.getTileHeight());
 
                 AreaHelper.calculateAbsoluteArea(maskArea, tileSelected.getWidth(), tileSelected.getHeight());
 
@@ -179,8 +248,8 @@ public class MapEditorController extends AbstractController {
 
         eventDrag.setOnMouve((area, event) -> {
             if (tileSelected != null) {
-                double column = (int) Math.floor(event.getX() / tileSet.getTileWidth());
-                double line = (int) Math.floor(event.getY() / tileSet.getTileHeight());
+                double column = (int) Math.floor(event.getX() / map.getTileWidth());
+                double line = (int) Math.floor(event.getY() / map.getTileHeight());
 
                 if (column + tileSelected.getWidth() > map.getWidth()) {
                     column = map.getWidth() - tileSelected.getWidth();
@@ -207,17 +276,11 @@ public class MapEditorController extends AbstractController {
      * Create map for test
      */
     private void initMap() {
-        this.map = new Map("test", 20, 20);
+        this.map = new Map("test", 20, 20, 32, 32);
 
+        MapHelper.addEmptylayer(map);
 
-        final Layer<Tile> layer = map.addlayer(new TileLayer(map.getWidth(), map.getHeight()));
-        cellIterate((i, j) -> {
-            layer.put(new Tile(tileSet, 0, 0), i, j);
-        });
-
-        Layer<Tile> layer2 = map.addlayer(new TileLayer(map.getWidth(), map.getHeight()));
-
-        selectLayerId = 1;
+        selectLayerId = 0;
 
     }
 
@@ -264,9 +327,9 @@ public class MapEditorController extends AbstractController {
         Rectangle rectangle = new Rectangle();
         rectangle.setX(area.getBegin().getX());
 
-        rectangle.setWidth(area.getWidth() * tileSet.getTileWidth() - strockeSized);
+        rectangle.setWidth(area.getWidth() * map.getTileWidth() - strockeSized);
         rectangle.setY(area.getBegin().getY());
-        rectangle.setHeight(area.getHeight() * tileSet.getTileHeight() - strockeSized);
+        rectangle.setHeight(area.getHeight() * map.getTileHeight() - strockeSized);
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.BLACK);
         rectangle.setStrokeWidth(strockeSized);
@@ -300,8 +363,8 @@ public class MapEditorController extends AbstractController {
         Rectangle cell = new Rectangle();
         cell.setStroke(Color.GRAY);
         cell.setFill(Color.TRANSPARENT);
-        cell.setWidth(tileSet.getTileWidth() - 1);
-        cell.setHeight(tileSet.getTileHeight() - 1);
+        cell.setWidth(map.getTileWidth() - 1);
+        cell.setHeight(map.getTileHeight() - 1);
         cell.setStrokeWidth(0.5);
         return cell;
     }

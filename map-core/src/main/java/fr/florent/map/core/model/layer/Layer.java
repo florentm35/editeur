@@ -9,7 +9,6 @@ public class Layer<T> {
     protected double width;
     protected double height;
 
-
     public Layer(double width, double height) {
         tiles = new Object[(int) (width * height)];
         this.width = width;
