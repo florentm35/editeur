@@ -68,4 +68,16 @@ public class Map {
     public int getTileHeight() {
         return tileHeight;
     }
+
+    @Override
+    public String toString() {
+        return "Map{" +
+                "title='" + title + '\'' +
+                ", width=" + width +
+                ", height=" + height +
+                ", tileWidth=" + tileWidth +
+                ", tileHeight=" + tileHeight +
+                ", layers=" + layers +
+                '}';
+    }
 }

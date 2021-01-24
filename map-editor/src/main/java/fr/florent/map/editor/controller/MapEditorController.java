@@ -19,22 +19,14 @@ import fr.florent.map.core.model.selection.Area;
 import fr.florent.map.core.model.selection.Point2D;
 import fr.florent.map.core.model.tile.Tile;
 import fr.florent.map.editor.controller.message.MapResizeMessage;
-import fr.florent.tilepicker.TilePickerController;
 import fr.florent.tilepicker.message.TileSelectedMessage;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -44,7 +36,6 @@ import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 //TODO : refactor constante string (label, xml path, css path, ...)
@@ -63,7 +54,7 @@ public class MapEditorController extends AbstractController {
     public TabPane tabPane;
     public MenuButton mapParamButton;
 
-    public GridPane boxImage;
+    public Canvas canvasMap;
     public Pane paneMap;
     public ScrollPane scrollPane;
 
@@ -87,9 +78,9 @@ public class MapEditorController extends AbstractController {
         initMap();
         initTabPaneLayer();
         renderMap();
-        initEvent();
+        initMouseEvent();
 
-        initPaneMapEvent();
+        initPaneMapZoomEvent();
 
         initMapSettings();
 
@@ -100,11 +91,11 @@ public class MapEditorController extends AbstractController {
 
 
         paneMap.widthProperty().addListener((obs, oldVal, newVal) -> {
-            scrollPane.setMaxWidth(newVal.doubleValue() + 2);
+            scrollPane.setMaxWidth(newVal.doubleValue());
         });
 
         paneMap.heightProperty().addListener((obs, oldVal, newVal) -> {
-            scrollPane.setMaxHeight(newVal.doubleValue() + 2);
+            scrollPane.setMaxHeight(newVal.doubleValue());
         });
 
     }
@@ -191,8 +182,7 @@ public class MapEditorController extends AbstractController {
         }
     }
 
-    // TODO : rename
-    private void initPaneMapEvent() {
+    private void initPaneMapZoomEvent() {
         paneMap.setOnMouseEntered(e -> paneMap.requestFocus());
 
 
@@ -222,7 +212,7 @@ public class MapEditorController extends AbstractController {
 
     public void onMapResize(AbstractMessage message) {
         if (message instanceof MapResizeMessage) {
-            boxImage.getChildren().clear();
+            clearCanvasMap();
             renderMap();
         }
     }
@@ -235,42 +225,31 @@ public class MapEditorController extends AbstractController {
         }
     }
 
-    // TODO : rename
-    private void initEvent() {
+    private void initMouseEvent() {
         EventSelectionAndDragged eventDrag = new EventSelectionAndDragged(paneMap, map.getWidth() * map.getTileWidth(), map.getHeight() * map.getTileHeight());
         eventDrag.setOnRelease(area -> {
             if (tileSelected != null && selectLayerId >= 0) {
+
                 Area maskArea = new Area(new Point2D(area.getBegin().getX(), area.getBegin().getY()),
                         new Point2D(area.getEnd().getX(), area.getEnd().getY()));
 
                 AreaHelper.convertAreaToGrid(maskArea, map.getTileWidth(), map.getTileHeight());
 
                 AreaHelper.calculateAbsoluteArea(maskArea, tileSelected.getWidth(), tileSelected.getHeight());
-
                 // Blit Tile
                 Layer layer = map.getLayers().get(selectLayerId);
 
                 if (layer instanceof TileLayer) {
-
-
-                    TileLayer selection = tileSelected;
-                    for (double x = maskArea.getBegin().getX(); x <= maskArea.getEnd().getX(); x++) {
-                        for (double y = maskArea.getBegin().getY(); y <= maskArea.getEnd().getY(); y++) {
-
-                            // Sauvegarde dans le layer
-                            layer.put(selection.get((int) (x - maskArea.getBegin().getX()) % selection.getWidth(),
-                                    (int) (y - maskArea.getBegin().getY()) % selection.getHeight()), (int) x, (int) y);
-
-                            updateCellGrid((int) x, (int) y);
-                        }
-                    }
+                    blitTileArea(maskArea, layer, tileSelected);
                 }
             }
 
         });
 
+        // TODO :  FIX area out of band
         eventDrag.setOnDragged(area -> {
             if (tileSelected != null) {
+
                 Area maskArea = new Area(new Point2D(area.getBegin().getX(), area.getBegin().getY()),
                         new Point2D(area.getEnd().getX(), area.getEnd().getY()));
 
@@ -284,13 +263,12 @@ public class MapEditorController extends AbstractController {
 
         eventDrag.setOnMouve((area, event) -> {
             if (tileSelected != null) {
+
                 double column = (int) Math.floor(event.getX() / map.getTileWidth());
                 double line = (int) Math.floor(event.getY() / map.getTileHeight());
-
                 if (column + tileSelected.getWidth() > map.getWidth()) {
                     column = map.getWidth() - tileSelected.getWidth();
                 }
-
                 if (line + tileSelected.getHeight() > map.getHeight()) {
                     line = map.getHeight() - tileSelected.getHeight();
                 }
@@ -299,7 +277,6 @@ public class MapEditorController extends AbstractController {
                 double height = tileSelected.getHeight();
 
                 Area maskArea = new Area(column, line, width, height);
-
                 updateSelectionMask(maskArea);
             }
 
@@ -307,6 +284,19 @@ public class MapEditorController extends AbstractController {
 
         paneMap.setOnMouseExited(e -> clearRectangle());
     }
+
+    private void blitTileArea(Area maskArea, Layer layer, TileLayer selection) {
+        for (double x = maskArea.getBegin().getX(); x <= maskArea.getEnd().getX(); x++) {
+            for (double y = maskArea.getBegin().getY(); y <= maskArea.getEnd().getY(); y++) {
+                // Sauvegarde dans le layer
+                layer.put(selection.get((int) (x - maskArea.getBegin().getX()) % selection.getWidth(),
+                        (int) (y - maskArea.getBegin().getY()) % selection.getHeight()), (int) x, (int) y);
+
+                updateCellGrid((int) x, (int) y);
+            }
+        }
+    }
+
 
     /**
      * Create map for test
@@ -330,23 +320,25 @@ public class MapEditorController extends AbstractController {
 
         if (selectionMask == null) {
             selectionMask = getSelectionMask(area);
-
-
-            boxImage.add(selectionMask, (int) area.getBegin().getX(), (int) area.getBegin().getY(),
-                    (int) area.getWidth(), (int) area.getHeight());
+            paneMap.getChildren().add(selectionMask);
         } else {
-
             double selectionWidth = (selectionMask.getWidth() + 2);
             double selectionHeight = (selectionMask.getHeight() + 2);
-
             if (selectionMask.getX() != area.getBegin().getX() || selectionMask.getY() != area.getBegin().getY()
                     || selectionWidth != area.getWidth() || selectionHeight != area.getHeight()) {
-                clearRectangle();
+                paneMap.getChildren().remove(selectionMask);
                 selectionMask = getSelectionMask(area);
-                boxImage.add(selectionMask, (int) area.getBegin().getX(), (int) area.getBegin().getY(),
-                        (int) area.getWidth(), (int) area.getHeight());
+                paneMap.getChildren().add(selectionMask);
             }
         }
+    }
+
+    private void drawRectangle(Rectangle selectionMask) {
+        GraphicsContext gc = canvasMap.getGraphicsContext2D();
+        gc.setStroke(selectionMask.getStroke());
+        gc.setFill(selectionMask.getFill());
+        gc.setLineWidth(selectionMask.getStrokeWidth());
+        gc.fillRect(selectionMask.getX(), selectionMask.getY(), selectionMask.getWidth(), selectionMask.getHeight());
     }
 
     /**
@@ -357,19 +349,18 @@ public class MapEditorController extends AbstractController {
      */
     private Rectangle getSelectionMask(Area area) {
 
-
         int strockeSized = 2;
 
         Rectangle rectangle = new Rectangle();
-        rectangle.setX(area.getBegin().getX());
+        rectangle.setX(area.getBegin().getX() * map.getTileWidth() + strockeSized);
+        rectangle.setY(area.getBegin().getY() * map.getTileHeight() + strockeSized);
 
         rectangle.setWidth(area.getWidth() * map.getTileWidth() - strockeSized);
-        rectangle.setY(area.getBegin().getY());
         rectangle.setHeight(area.getHeight() * map.getTileHeight() - strockeSized);
+
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.BLACK);
         rectangle.setStrokeWidth(strockeSized);
-
 
         return rectangle;
     }
@@ -379,7 +370,10 @@ public class MapEditorController extends AbstractController {
      */
     private void clearRectangle() {
 
-        boxImage.getChildren().remove(this.selectionMask);
+
+        if (selectionMask != null) {
+            paneMap.getChildren().remove(selectionMask);
+        }
 
         this.selectionMask = null;
 
@@ -390,12 +384,24 @@ public class MapEditorController extends AbstractController {
      * Render map from the Layer of Map
      */
     private void renderMap() {
+
+        clearCanvasMap();
+        canvasMap = new Canvas(map.getTileWidth() * map.getWidth(), map.getTileHeight() * map.getHeight());
+        paneMap.getChildren().add(canvasMap);
         cellIterate((i, j) -> {
             updateCellGrid(i, j);
         });
     }
 
-    private Rectangle getBorderCell() {
+    private void clearCanvasMap() {
+        if (canvasMap != null) {
+            paneMap.getChildren().remove(canvasMap);
+            canvasMap = null;
+        }
+    }
+
+    private Rectangle getBorderCell(int x, int y) {
+
         Rectangle cell = new Rectangle();
         cell.setStroke(Color.GRAY);
         cell.setFill(Color.TRANSPARENT);
@@ -413,32 +419,41 @@ public class MapEditorController extends AbstractController {
      */
     private void updateCellGrid(int x, int y) {
 
-        removeNodeByRowColumnIndex(x, y, boxImage);
+        if (x < 0 || y < 0 || x > map.getWidth() || y > map.getHeight()) {
+            return;
+        }
+
+        removeNodeByRowColumnIndex(x, y);
+
+        GraphicsContext gc = canvasMap.getGraphicsContext2D();
 
         for (Layer layerMap : map.getLayers()) {
             if (layerMap instanceof TileLayer) {
                 TileLayer layer = (TileLayer) layerMap;
                 Tile tile = layer.get(x, y);
                 if (tile != null) {
-                    ImageView node = new ImageView(tile.getCacheImage());
-                    boxImage.add(node, x, y);
+                    gc.drawImage(tile.getCacheImage(), x * map.getTileWidth(), y * map.getTileHeight());
+                    /*ImageView node = new ImageView(tile.getCacheImage());
+                    boxImage.add(node, x, y);*/
                 }
             }
         }
 
-        boxImage.add(getBorderCell(), x, y);
+
+
+        /*gc.setFill(Color.GRAY);
+        gc.setLineWidth(1.0);
+        gc.fillRect(x * map.getTileWidth(), y * map.getTileHeight(), map.getTileWidth(), map.getTileHeight());*/
+        //boxImage.add(getBorderCell(), x, y);
+        drawRectangle(getBorderCell(x * map.getTileWidth(), y * map.getTileHeight()));
+
     }
 
-    public void removeNodeByRowColumnIndex(final int column, final int row, GridPane gridPane) {
+    public void removeNodeByRowColumnIndex(final int column, final int row) {
 
-        ObservableList<Node> childrens = gridPane.getChildren();
-        List<Node> copy = List.copyOf(childrens);
+        GraphicsContext gc = canvasMap.getGraphicsContext2D();
+        gc.clearRect(column * map.getTileWidth(), row * map.getTileHeight(), map.getTileWidth(), map.getTileHeight());
 
-        for (Node node : copy) {
-            if (node instanceof ImageView && gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
-                gridPane.getChildren().remove(node);
-            }
-        }
     }
 
     private void cellIterate(IActionDoubleIterator action) {

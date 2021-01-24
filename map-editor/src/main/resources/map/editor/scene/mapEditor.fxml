@@ -31,9 +31,7 @@
                           minHeight="${scrollPane.viewportBounds.height}">
                         <HBox alignment="CENTER" fx:id="hbox" minWidth="${scrollPane.viewportBounds.width}">
                             <Pane fx:id="paneMap">
-                                <GridPane fx:id="boxImage"
-                                          GridPane.columnIndex="1">
-                                </GridPane>
+
                             </Pane>
                         </HBox>
                     </VBox>
