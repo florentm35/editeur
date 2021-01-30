@@ -1,1 +1,14 @@
-test
+TODO:
+-
+- Fix :
+    - Grid map rendered
+    - Remove GSON
+    - Tile picker width
+    - Tab update on open/new map
+    - Outer blit selection
+    - TODO code
+- Upgrade :
+    - Auto tile
+    - Png export
+    - Menu priority
+    - Sub menu
