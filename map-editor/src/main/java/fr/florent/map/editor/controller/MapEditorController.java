@@ -118,6 +118,7 @@ public class MapEditorController extends AbstractController {
 
         if (chosenFile != null) {
             this.map = MapHelper.loadMap(chosenFile);
+            initTabPaneLayer();
             clearCanvasMap();
             renderMap();
         }
@@ -127,7 +128,7 @@ public class MapEditorController extends AbstractController {
         if (abstractMessage instanceof MapSaveMessage) {
             MapSaveMessage message = (MapSaveMessage) abstractMessage;
             this.map = message.getMap();
-
+            initTabPaneLayer();
             clearCanvasMap();
             renderMap();
         }
@@ -192,6 +193,8 @@ public class MapEditorController extends AbstractController {
     }
 
     private void initTabPaneLayer() {
+
+        tabPane.getTabs().clear();
 
         Tab newTab = new Tab("+");
         newTab.setClosable(false);
@@ -345,7 +348,7 @@ public class MapEditorController extends AbstractController {
      * Create map for test
      */
     private void initMap() {
-        this.map = new Map("test", 20, 20, 32, 32);
+        this.map = new Map("test", 50, 50, 32, 32);
 
         MapHelper.addEmptylayer(map);
 

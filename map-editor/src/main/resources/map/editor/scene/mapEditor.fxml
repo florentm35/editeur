@@ -12,19 +12,17 @@
             fx:controller="fr.florent.map.editor.controller.MapEditorController"
             fx:id="parent">
 
+    <TabPane fx:id="tabPane" tabClosingPolicy="ALL_TABS" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 
-
-
-    <VBox AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="0" fx:id="splitPane"
+    </TabPane>
+    <VBox AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="20" fx:id="splitPane"
           AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 
-        <TabPane fx:id="tabPane" tabClosingPolicy="ALL_TABS">
 
-        </TabPane>
 
         <AnchorPane VBox.vgrow="ALWAYS">
             <ScrollPane fx:id="scrollPane" styleClass="transparent-background"
-                        AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="0"
+                        AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="10"
                         AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
                 <Group>
                     <VBox alignment="CENTER"
