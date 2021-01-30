@@ -9,6 +9,7 @@ import fr.florent.map.core.model.tile.TileSerializer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 
+// TODO : burn this
 public class LayerSerializer implements JsonSerializer<Layer>, JsonDeserializer<Layer> {
 
 
