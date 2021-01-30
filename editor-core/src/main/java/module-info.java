@@ -4,7 +4,7 @@ module editor.core {
     requires javafx.graphics;
     requires javafx.fxml;
     requires javafx.base;
-    requires reflections;
+    requires reflections8;
     requires log4j;
 
     exports fr.florent.editor.core.annotation;

@@ -2,7 +2,9 @@ package fr.florent.map.core.model.layer;
 
 import java.util.Arrays;
 
-public class Layer<T> {
+public abstract class Layer<T> {
+
+
 
     // TODO :  refactor double to double
     protected Object[] tiles;
@@ -14,6 +16,8 @@ public class Layer<T> {
         this.width = width;
         this.height = height;
     }
+
+    public abstract Class getTypeClass();
 
     /**
      * Resize the Layer<br/>

@@ -7,7 +7,7 @@ import fr.florent.editor.core.message.MessageSystem;
 import fr.florent.editor.core.message.WindowsResizeMessage;
 import fr.florent.editor.core.properties.PropertiesUtil;
 import fr.florent.editor.core.ressource.ResourceLoader;
-import fr.florent.editor.ressource.EditorRessourceLoader;
+import fr.florent.editor.ressource.EditorResourceLoader;
 import javafx.application.Application;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -23,13 +23,15 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         loadModule();
         Stage stage = AbstractController.getStage(
-                EditorRessourceLoader.getResource(EditorController.RESSOURCE_VIEW_PATH),
+                EditorResourceLoader.getResource(EditorController.RESSOURCE_VIEW_PATH),
                 "Ma fenêtre", (int) Screen.getPrimary().getBounds().getWidth() - 200,
                 (int) Screen.getPrimary().getBounds().getHeight() - 200);
 
         stage.show();
 
         eventWindowSize(stage);
+
+
 
     }
 

@@ -1,10 +1,7 @@
 package fr.florent.editor.core.ressource;
 
-import fr.florent.editor.core.annotation.Screen;
 import fr.florent.editor.core.exception.RuntimeEditorException;
 import org.apache.log4j.Logger;
-import org.reflections.Reflections;
-import org.reflections.util.ConfigurationBuilder;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
@@ -46,12 +43,8 @@ public class ResourceLoader {
         }
     }
 
-    public Set<Class<?>> getTypesAnnotatedWith(Class<? extends Annotation> annotationCLass) {
-        Reflections reflections = new Reflections(
-                ConfigurationBuilder.build(classLoader)
-        );
-        return reflections.getTypesAnnotatedWith(annotationCLass);
-
+    public Set<Class<?>> getTypesAnnotatedWith(Class<? extends Annotation> annotationClass) {
+        return ResourceHelper.getTypesAnnotatedWith(classLoader, annotationClass);
     }
 
     private URLClassLoader getModuleClassLoader(String... path) {

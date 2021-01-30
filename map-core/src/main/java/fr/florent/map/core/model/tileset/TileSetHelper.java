@@ -21,6 +21,16 @@ import org.apache.commons.io.FilenameUtils;
 // TODO : refactor
 public class TileSetHelper {
 
+    // Refactor to search file or create cache
+    public static TileSet getTileSetFromId(String id) {
+        for (TileSet tileSet : TileSetHelper.getListTileSet()) {
+            if (tileSet.getId().equals(id)) {
+                return tileSet;
+            }
+        }
+        return null;
+    }
+
     public static TileSetFile getFileFromTileSet(TileSet tileSet) {
 
         TileSetFile file = new TileSetFile();

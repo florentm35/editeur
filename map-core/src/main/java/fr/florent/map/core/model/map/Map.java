@@ -5,8 +5,13 @@ import fr.florent.map.core.model.layer.Layer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class Map {
+
+
+    private UUID id;
+
     private String title;
     private int width;
     private int height;
@@ -15,6 +20,9 @@ public class Map {
     private ArrayList<Layer> layers;
 
     public Map(String title, int width, int height, int tileWidth, int tileHeight) {
+
+        this.id = UUID.randomUUID();
+
         layers = new ArrayList<>();
         this.title = title;
         this.width = width;
@@ -67,6 +75,10 @@ public class Map {
 
     public int getTileHeight() {
         return tileHeight;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     @Override

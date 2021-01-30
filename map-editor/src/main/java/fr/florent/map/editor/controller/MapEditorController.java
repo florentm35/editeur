@@ -7,6 +7,7 @@ import fr.florent.editor.core.controller.AbstractController;
 import fr.florent.editor.core.event.util.IActionDoubleIterator;
 import fr.florent.editor.core.message.AbstractMessage;
 import fr.florent.editor.core.message.MessageSystem;
+import fr.florent.editor.core.message.SaveMessage;
 import fr.florent.editor.core.message.SceneResizeMessage;
 import fr.florent.editor.core.ressource.ResourceLoader;
 import fr.florent.map.core.helper.AreaHelper;
@@ -18,7 +19,9 @@ import fr.florent.map.core.model.map.MapHelper;
 import fr.florent.map.core.model.selection.Area;
 import fr.florent.map.core.model.selection.Point2D;
 import fr.florent.map.core.model.tile.Tile;
-import fr.florent.map.editor.controller.message.MapResizeMessage;
+import fr.florent.map.editor.controller.message.MapSaveMessage;
+import fr.florent.map.editor.controller.message.NewMapMessage;
+import fr.florent.map.editor.controller.message.OpenMapMessage;
 import fr.florent.tilepicker.message.TileSelectedMessage;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
@@ -31,10 +34,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -87,8 +92,10 @@ public class MapEditorController extends AbstractController {
 
         MessageSystem.getInstance().addObserver(SceneResizeMessage.getKey(EnumScreenPosition.CENTER), this::onWindowsResize);
 
-        MessageSystem.getInstance().addObserver(MapResizeMessage.class.getName(), this::onMapResize);
-
+        MessageSystem.getInstance().addObserver(SaveMessage.class.getName(), this::saveMap);
+        MessageSystem.getInstance().addObserver(NewMapMessage.class.getName(), this::newMap);
+        MessageSystem.getInstance().addObserver(OpenMapMessage.class.getName(), this::openMap);
+        MessageSystem.getInstance().addObserver(MapSaveMessage.class.getName(), this::mapChange);
 
         paneMap.widthProperty().addListener((obs, oldVal, newVal) -> {
             scrollPane.setMaxWidth(newVal.doubleValue());
@@ -100,20 +107,62 @@ public class MapEditorController extends AbstractController {
 
     }
 
+    private void openMap(AbstractMessage abstractMessage) {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+
+        fileChooser.setInitialDirectory(new File(MapHelper.getMapPath().toString()));
+
+        File chosenFile = fileChooser.showOpenDialog(parent.getScene().getWindow());
+
+        if (chosenFile != null) {
+            this.map = MapHelper.loadMap(chosenFile);
+            clearCanvasMap();
+            renderMap();
+        }
+    }
+
+    private void mapChange(AbstractMessage abstractMessage) {
+        if (abstractMessage instanceof MapSaveMessage) {
+            MapSaveMessage message = (MapSaveMessage) abstractMessage;
+            this.map = message.getMap();
+
+            clearCanvasMap();
+            renderMap();
+        }
+
+    }
+
+    private void newMap(AbstractMessage abstractMessage) {
+
+        Map map = new Map("", 0, 0, 32, 32);
+        MapHelper.addEmptylayer(map);
+        openSettingModal(map);
+    }
+
+    private void openSettingModal(Map map) {
+        ResourceLoader resourceLoader = ResourceLoader.getInstance();
+        FXMLLoader loader = AbstractController.getLoader(
+                resourceLoader.getClassLoader(),
+                resourceLoader.getRessource(ParamMapDialogController.class, "/map/editor/scene/paramMapDialog.fxml")
+        );
+
+        ParamMapDialogController controler = loader.getController();
+        controler.loadMap(map);
+        Stage stage = getStage(loader, String.format("Settings : %s", map.getTitle()), -1, -1);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.show();
+    }
+
+    private void saveMap(AbstractMessage abstractMessage) {
+        MapHelper.saveMap(map);
+    }
+
     private void initMapSettings() {
         MenuItem itemImport = new MenuItem("Settings");
         itemImport.setOnAction(t -> {
-            ResourceLoader resourceLoader = ResourceLoader.getInstance();
-            FXMLLoader loader = AbstractController.getLoader(
-                    resourceLoader.getClassLoader(),
-                    resourceLoader.getRessource(ParamMapDialogController.class, "/map/editor/scene/paramMapDialog.fxml")
-            );
-
-            ParamMapDialogController controler = loader.getController();
-            controler.loadMap(map);
-            Stage stage = getStage(loader, String.format("Settings : %s", map.getTitle()), -1, -1);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.show();
+            openSettingModal(map);
         });
         mapParamButton.getItems().add(itemImport);
     }
@@ -210,12 +259,6 @@ public class MapEditorController extends AbstractController {
         });
     }
 
-    public void onMapResize(AbstractMessage message) {
-        if (message instanceof MapResizeMessage) {
-            clearCanvasMap();
-            renderMap();
-        }
-    }
 
     public void onWindowsResize(AbstractMessage message) {
         if (message instanceof SceneResizeMessage) {

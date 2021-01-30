@@ -15,6 +15,8 @@ public class PropertiesUtil {
     public static final String KEY_TILESET_PATH = "editor.resource.tileset.path";
 
     public static final String KEY_LIB_PATH = "editor.lib.path";
+    public static final String KEY_MAP_PATH = "editor.map.path";
+
     public static Properties prop = null;
 
     public static void load(ClassLoader loader, String ressource) {

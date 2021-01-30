@@ -4,21 +4,15 @@ import fr.florent.editor.core.controller.AbstractController;
 import fr.florent.editor.core.message.MessageSystem;
 import fr.florent.editor.core.ressource.ResourceLoader;
 import fr.florent.map.core.model.map.Map;
-import fr.florent.map.core.model.tileset.TileSet;
-import fr.florent.map.core.model.tileset.TileSetFile;
-import fr.florent.map.core.model.tileset.TileSetHelper;
-import fr.florent.map.editor.controller.message.MapResizeMessage;
-import fr.florent.tilepicker.message.TileSetCreateMessage;
+import fr.florent.map.editor.controller.message.MapSaveMessage;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -74,7 +68,7 @@ public class ParamMapDialogController extends AbstractController {
         } catch (NumberFormatException ex) {
             LOGGER.warn(ex.getMessage());
         }
-        MessageSystem.getInstance().notify(new MapResizeMessage(map));
+        MessageSystem.getInstance().notify(new MapSaveMessage(map));
 
     }
 

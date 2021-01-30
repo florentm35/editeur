@@ -9,9 +9,9 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 
 public class Tile extends AbstractTile {
+
     private Image cacheImage;
     private TileSet tileSet;
-
 
     // TODO : Move cache work in Helper/Factory
     public Tile(TileSet tileSet, double x, double y) {
@@ -43,6 +43,5 @@ public class Tile extends AbstractTile {
     public TileSet getTileSet() {
         return tileSet;
     }
-
 
 }
