@@ -479,18 +479,11 @@ public class MapEditorController extends AbstractController {
                 Tile tile = layer.get(x, y);
                 if (tile != null) {
                     gc.drawImage(tile.getCacheImage(), x * map.getTileWidth(), y * map.getTileHeight());
-                    /*ImageView node = new ImageView(tile.getCacheImage());
-                    boxImage.add(node, x, y);*/
                 }
             }
         }
 
 
-
-        /*gc.setFill(Color.GRAY);
-        gc.setLineWidth(1.0);
-        gc.fillRect(x * map.getTileWidth(), y * map.getTileHeight(), map.getTileWidth(), map.getTileHeight());*/
-        //boxImage.add(getBorderCell(), x, y);
         drawRectangle(getBorderCell(x * map.getTileWidth(), y * map.getTileHeight()));
 
     }
