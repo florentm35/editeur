@@ -25,6 +25,7 @@ import fr.florent.map.editor.controller.message.OpenMapMessage;
 import fr.florent.tilepicker.message.TileSelectedMessage;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;

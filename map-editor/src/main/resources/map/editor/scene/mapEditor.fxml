@@ -18,8 +18,6 @@
     <VBox AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="20" fx:id="splitPane"
           AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 
-
-
         <AnchorPane VBox.vgrow="ALWAYS">
             <ScrollPane fx:id="scrollPane" styleClass="transparent-background"
                         AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="10"
