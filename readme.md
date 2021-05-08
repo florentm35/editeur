@@ -7,6 +7,7 @@ TODO:
     - Tab update on open/new map
     - Outer blit selection
     - TODO code
+    - external brush code and brush paint
 - Upgrade :
     - Auto tile (And add tab for left panel)
     - Png export
